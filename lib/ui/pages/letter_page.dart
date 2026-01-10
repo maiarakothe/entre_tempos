@@ -33,7 +33,8 @@ class _LetterPageState extends State<LetterPage> {
                 final Letter? result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ViewLetterPage(letter: letter),
+                    builder: (context) =>
+                        ViewLetterPage(letter: letter, allLetters: letters),
                   ),
                 );
 
@@ -47,6 +48,11 @@ class _LetterPageState extends State<LetterPage> {
             child: Card(
               child: Column(
                 children: [
+                  if (letter.parentId != null)
+                    const Text(
+                      'Resposta',
+                      style: TextStyle(color: Colors.blue, fontSize: 12),
+                    ),
                   Text(letter.title),
                   Text(letter.openingDate.toString()),
                   Text(isLocked ? 'Bloqueada' : 'Disponível'),

@@ -89,6 +89,7 @@ class _ReaplyLetterPageState extends State<ReplyLetterPage> {
                         content: content,
                         creationDate: DateTime.now(),
                         openingDate: selectedDate!,
+                        parentId: widget.originalLetter.id,
                       );
                       Navigator.pop(context, letter);
                     },

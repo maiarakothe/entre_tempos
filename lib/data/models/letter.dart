@@ -1,11 +1,12 @@
 import 'dart:core';
 
 class Letter {
-  late String id;
-  late String title;
-  late String content;
-  late DateTime creationDate;
-  late DateTime openingDate;
+  String id;
+  String title;
+  String content;
+  DateTime creationDate;
+  DateTime openingDate;
+  String? parentId;
 
   Letter({
     required this.id,
@@ -13,5 +14,6 @@ class Letter {
     required this.content,
     required this.creationDate,
     required this.openingDate,
+    this.parentId,
   });
 }
