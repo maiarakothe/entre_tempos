@@ -1,3 +1,4 @@
+import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/data/models/letter.dart';
 import 'package:flutter/material.dart';
 
@@ -54,9 +55,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
                     child: Text(
                       selectedDate == null
                           ? 'Escolher data'
-                          : '${selectedDate!.day.toString().padLeft(2, '0')}/'
-                                '${selectedDate!.month.toString().padLeft(2, '0')}/'
-                                '${selectedDate!.year}',
+                          : formatDate(selectedDate!),
                     ),
                   ),
                   SizedBox(height: 10),

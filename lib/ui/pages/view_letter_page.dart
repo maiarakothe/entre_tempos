@@ -1,3 +1,4 @@
+import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/ui/pages/reply_letter_page.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +24,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
   Widget build(BuildContext context) {
     if (widget.letter.parentId != null) {
       originalLetter = widget.allLetters.firstWhere(
-        (l) => l.id == widget.letter.parentId,
+        (Letter l) => l.id == widget.letter.parentId,
       );
     }
 
@@ -31,14 +32,14 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
       body: Center(
         child: Card(
           child: Column(
-            children: [
+            children: <Widget>[
               if (originalLetter != null)
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => ViewLetterPage(
+                      MaterialPageRoute<dynamic>(
+                        builder: (BuildContext context) => ViewLetterPage(
                           letter: originalLetter!,
                           allLetters: widget.allLetters,
                         ),
@@ -52,13 +53,13 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
                 ),
               Text(widget.letter.title),
               Text(widget.letter.content),
-              Text(widget.letter.creationDate.toString()),
+              Text(formatDate(widget.letter.creationDate)),
               ElevatedButton(
                 onPressed: () async {
                   Letter? newLetter = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
+                      builder: (BuildContext context) =>
                           ReplyLetterPage(originalLetter: widget.letter),
                     ),
                   );
