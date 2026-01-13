@@ -39,11 +39,30 @@ class _LetterPageState extends State<LetterPage> {
     );
   }
 
+  Widget slogan() {
+    return Container(
+      height: 100,
+      width: 800,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 10),
+          Text('Escreva hoje. Leia amanhã.', style: TextStyle(fontSize: 20)),
+          Text(
+            'Envie mensagens para para seu futuro.',
+            style: TextStyle(fontSize: 20),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget newLetter() {
     return Column(
       children: <Widget>[
-        Text('Escreva hoje. Leia amanhã.'),
-        Text('Envie mensagens para p seu futuro'),
         Padding(
           padding: const EdgeInsets.all(10),
           child: Row(
@@ -206,17 +225,35 @@ class _LetterPageState extends State<LetterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Header(),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            newLetter(),
-            const SizedBox(height: 10),
-            LettersSection(),
-          ],
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[Color(0xFFFFD3E0), Color(0xFFD4E2FF)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 10),
+                slogan(),
+                const SizedBox(height: 10),
+                newLetter(),
+                const SizedBox(height: 10),
+                LettersSection(),
+              ],
+            ),
+          ),
         ),
       ),
     );
