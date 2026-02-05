@@ -15,10 +15,28 @@ class LetterPage extends StatefulWidget {
 
 class _LetterPageState extends State<LetterPage> {
   List<Letter> letters = <Letter>[];
+  int? selectedIndex;
 
   Widget Header() {
     return AppBar(
-      title: Text('entreTempos'),
+      title: Row(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              gradient: DefaultColors.colorTest,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.mail_outline,
+              size: 20,
+              color: DefaultColors.cardLight,
+            ),
+          ),
+          SizedBox(width: 4),
+          Text('EntreTempos', style: TextStyle(fontWeight: FontWeight.w500)),
+        ],
+      ),
       backgroundColor: Colors.white.withValues(alpha: 0.7),
       actions: <Widget>[
         TextButton.icon(
@@ -82,13 +100,13 @@ class _LetterPageState extends State<LetterPage> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.only(left: 20, right: 20),
           child: Row(
             children: <Widget>[
               Text(
                 'Minhas Cartas',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 26,
                   fontWeight: FontWeight.w600,
                   color: DefaultColors.text,
                 ),
@@ -132,7 +150,23 @@ class _LetterPageState extends State<LetterPage> {
     );
   }
 
-  int? selectedIndex;
+  Widget textCount() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20),
+        child: Text(
+          '${letters.length} cartas no total',
+          style: TextStyle(
+            fontSize: 15,
+            color: DefaultColors.textSecondary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget optionsFilter() {
     return Align(
       alignment: Alignment.centerLeft,
@@ -142,6 +176,7 @@ class _LetterPageState extends State<LetterPage> {
           decoration: BoxDecoration(
             color: DefaultColors.cardLight,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
           ),
           child: Padding(
             padding: const EdgeInsets.all(5),
@@ -164,9 +199,17 @@ class _LetterPageState extends State<LetterPage> {
                     ),
                     child: Row(
                       children: <Widget>[
-                        Icon(Icons.mail_outline),
+                        Icon(
+                          Icons.mail_outline,
+                          color: selectedIndex == 0 ? Colors.white : null,
+                        ),
                         SizedBox(width: 6),
-                        Text('Todas'),
+                        Text(
+                          'Todas',
+                          style: TextStyle(
+                            color: selectedIndex == 0 ? Colors.white : null,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -188,9 +231,17 @@ class _LetterPageState extends State<LetterPage> {
                     ),
                     child: Row(
                       children: <Widget>[
-                        Icon(Icons.lock_outline_sharp),
+                        Icon(
+                          Icons.lock_outline_sharp,
+                          color: selectedIndex == 1 ? Colors.white : null,
+                        ),
                         SizedBox(width: 6),
-                        Text('Bloqueadas'),
+                        Text(
+                          'Bloqueadas',
+                          style: TextStyle(
+                            color: selectedIndex == 1 ? Colors.white : null,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -212,9 +263,17 @@ class _LetterPageState extends State<LetterPage> {
                     ),
                     child: Row(
                       children: <Widget>[
-                        Icon(Icons.mark_email_read_outlined),
+                        Icon(
+                          Icons.mark_email_read_outlined,
+                          color: selectedIndex == 2 ? Colors.white : null,
+                        ),
                         SizedBox(width: 6),
-                        Text('Liberadas'),
+                        Text(
+                          'Liberadas',
+                          style: TextStyle(
+                            color: selectedIndex == 2 ? Colors.white : null,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -231,7 +290,9 @@ class _LetterPageState extends State<LetterPage> {
     if (letters.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(20),
-        child: Center(child: Text('Nenhuma carta')),
+        child: Center(
+          child: Text('Nenhuma carta', style: TextStyle(fontSize: 20)),
+        ),
       );
     }
     return LayoutBuilder(
@@ -266,8 +327,8 @@ class _LetterPageState extends State<LetterPage> {
 
   Widget buildLetterCard(Letter letter, bool isLocked) {
     return Card(
-      elevation: 2,
-      color: Colors.white,
+      elevation: 5,
+      color: isLocked ? null : DefaultColors.cardLight,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -277,17 +338,22 @@ class _LetterPageState extends State<LetterPage> {
             if (letter.parentId != null)
               Container(
                 margin: const EdgeInsets.only(bottom: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text(
-                  'RESPOSTA',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.reply, size: 10, color: DefaultColors.secondary),
+                    const SizedBox(width: 4),
+                    const Text(
+                      'RESPOSTA',
+                      style: TextStyle(
+                        color: DefaultColors.secondary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             Text(
@@ -313,41 +379,44 @@ class _LetterPageState extends State<LetterPage> {
             SizedBox(
               width: double.infinity,
               height: 40,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isLocked
-                      ? Colors.grey[100]
-                      : Colors.blueAccent,
-                  foregroundColor: isLocked ? Colors.grey[600] : Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.forbidden,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isLocked
+                        ? Colors.grey
+                        : DefaultColors.primary,
+                    foregroundColor: isLocked
+                        ? DefaultColors.textSecondary
+                        : Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                ),
-                onPressed: () async {
-                  if (isLocked) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Carta bloqueada')),
-                    );
-                  } else {
-                    final Letter? result = await Navigator.push(
-                      context,
-                      MaterialPageRoute<Letter>(
-                        builder: (BuildContext context) =>
-                            ViewLetterPage(letter: letter, allLetters: letters),
-                      ),
-                    );
-                    if (result != null) {
-                      setState(() {
-                        letters.add(result);
-                      });
-                    }
-                  }
-                },
-                icon: Icon(isLocked ? Icons.lock : Icons.visibility),
-                label: Text(
-                  isLocked ? 'Bloqueada' : 'Abrir Carta',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  onPressed: isLocked
+                      ? null
+                      : () async {
+                          final Letter? result = await Navigator.push(
+                            context,
+                            MaterialPageRoute<Letter>(
+                              builder: (BuildContext context) => ViewLetterPage(
+                                letter: letter,
+                                allLetters: letters,
+                              ),
+                            ),
+                          );
+                          if (result != null) {
+                            setState(() {
+                              letters.add(result);
+                            });
+                          }
+                        },
+                  icon: Icon(isLocked ? Icons.lock : Icons.visibility),
+                  label: Text(
+                    isLocked ? 'Bloqueada' : 'Abrir Carta',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ),
@@ -360,6 +429,7 @@ class _LetterPageState extends State<LetterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: DefaultColors.pageColor,
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -379,7 +449,9 @@ class _LetterPageState extends State<LetterPage> {
                 slogan(),
                 const SizedBox(height: 10),
                 newLetter(),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
+                textCount(),
+                const SizedBox(height: 5),
                 optionsFilter(),
                 const SizedBox(height: 10),
                 LettersSection(),
