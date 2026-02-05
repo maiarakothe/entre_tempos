@@ -3,6 +3,7 @@ import 'package:entre_tempos/ui/pages/new_letter_page.dart';
 import 'package:entre_tempos/ui/pages/view_letter_page.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/Colors.dart';
 import '../../data/models/letter.dart';
 
 class LetterPage extends StatefulWidget {
@@ -18,7 +19,7 @@ class _LetterPageState extends State<LetterPage> {
   Widget Header() {
     return AppBar(
       title: Text('entreTempos'),
-      backgroundColor: Colors.white60,
+      backgroundColor: Colors.white.withValues(alpha: 0.7),
       actions: <Widget>[
         TextButton.icon(
           onPressed: () {},
@@ -40,22 +41,39 @@ class _LetterPageState extends State<LetterPage> {
   }
 
   Widget slogan() {
-    return Container(
-      height: 100,
-      width: 800,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 10),
-          Text('Escreva hoje. Leia amanhã.', style: TextStyle(fontSize: 20)),
-          Text(
-            'Envie mensagens para para seu futuro.',
-            style: TextStyle(fontSize: 20),
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: DefaultColors.colorTest,
+          borderRadius: BorderRadius.circular(40),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 10),
+                Text(
+                  'Escreva hoje. Leia amanhã.',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: DefaultColors.cardLight,
+                  ),
+                ),
+                Text(
+                  'Envie mensagens para seu futuro.',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: DefaultColors.cardLight,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -64,12 +82,35 @@ class _LetterPageState extends State<LetterPage> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(20),
           child: Row(
             children: <Widget>[
-              Text('Minhas Cartas', style: TextStyle(fontSize: 18)),
+              Text(
+                'Minhas Cartas',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: DefaultColors.text,
+                ),
+              ),
               Spacer(),
-              ElevatedButton(
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: DefaultColors.primary,
+                  padding: const EdgeInsets.all(16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                label: Text(
+                  'Escrever Carta',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: DefaultColors.cardLight,
+                  ),
+                ),
+                icon: Icon(Icons.edit, color: DefaultColors.cardLight),
                 onPressed: () async {
                   Letter? result = await Navigator.push(
                     context,
@@ -83,12 +124,106 @@ class _LetterPageState extends State<LetterPage> {
                     });
                   }
                 },
-                child: Text('Nova carta'),
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  int? selectedIndex;
+  Widget optionsFilter() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Container(
+          decoration: BoxDecoration(
+            color: DefaultColors.cardLight,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = 0;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: selectedIndex == 0
+                          ? DefaultColors.colorTest
+                          : null,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.mail_outline),
+                        SizedBox(width: 6),
+                        Text('Todas'),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = 1;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: selectedIndex == 1
+                          ? DefaultColors.colorTest
+                          : null,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.lock_outline_sharp),
+                        SizedBox(width: 6),
+                        Text('Bloqueadas'),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = 2;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: selectedIndex == 2
+                          ? DefaultColors.colorTest
+                          : null,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.mark_email_read_outlined),
+                        SizedBox(width: 6),
+                        Text('Liberadas'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -225,7 +360,6 @@ class _LetterPageState extends State<LetterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -235,11 +369,7 @@ class _LetterPageState extends State<LetterPage> {
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: <Color>[Color(0xFFFFD3E0), Color(0xFFD4E2FF)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: DefaultColors.backgroundGradient,
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -249,6 +379,8 @@ class _LetterPageState extends State<LetterPage> {
                 slogan(),
                 const SizedBox(height: 10),
                 newLetter(),
+                const SizedBox(height: 10),
+                optionsFilter(),
                 const SizedBox(height: 10),
                 LettersSection(),
               ],
