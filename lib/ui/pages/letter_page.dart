@@ -290,8 +290,19 @@ class _LetterPageState extends State<LetterPage> {
     if (letters.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(20),
-        child: Center(
-          child: Text('Nenhuma carta', style: TextStyle(fontSize: 20)),
+        child: Column(
+          children: <Widget>[
+            Icon(Icons.mail_rounded, size: 48),
+            SizedBox(height: 12),
+            Text(
+              'Você ainda não escreveu nenhuma carta.',
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+            ),
+            Text(
+              'Que tal começar agora?',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 19),
+            ),
+          ],
         ),
       );
     }
@@ -429,7 +440,7 @@ class _LetterPageState extends State<LetterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: DefaultColors.pageColor,
+      backgroundColor: DefaultColors.pageColor,
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -438,9 +449,9 @@ class _LetterPageState extends State<LetterPage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: DefaultColors.backgroundGradient,
-        ),
+        // decoration: const BoxDecoration(
+        //   gradient: DefaultColors.backgroundGradient,
+        // ),
         child: SafeArea(
           child: SingleChildScrollView(
             child: Column(
