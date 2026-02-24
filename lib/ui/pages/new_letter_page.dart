@@ -1,9 +1,11 @@
+import 'package:entre_tempos/core/Colors.dart';
 import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/data/models/letter.dart';
 import 'package:flutter/material.dart';
 
 class NewLetterPage extends StatefulWidget {
-  const NewLetterPage({super.key});
+  final String? parentId;
+  const NewLetterPage({super.key, this.parentId});
 
   @override
   State<NewLetterPage> createState() => _NewLetterPageState();
@@ -21,82 +23,184 @@ class _NewLetterPageState extends State<NewLetterPage> {
     super.dispose();
   }
 
-  Widget LetterForm() {
-    return Center(
-      child: Container(
-        width: 600,
-        height: 700,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+  Widget header() {
+    return Column(
+      children: <Widget>[
+        Text(
+          'Escrever Nova Carta',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            color: DefaultColors.primary,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
         ),
-        child: Form(
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              children: <Widget>[
-                Text('Nova carta', style: TextStyle(fontSize: 20)),
-                TextFormField(
-                  controller: titleController,
-                  decoration: InputDecoration(hintText: 'Titulo'),
-                ),
-                TextFormField(
-                  controller: contentController,
-                  decoration: InputDecoration(hintText: 'Conteudo'),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () async {
-                    DateTime? result = await showDatePicker(
-                      context: context,
-                      currentDate: selectedDate,
-                      firstDate: DateTime(2026, 1, 1, 17, 30),
-                      lastDate: DateTime(2100, 9, 7, 17, 30),
-                    );
-                    setState(() {
-                      selectedDate = result;
-                    });
-                  },
-                  child: Text(
-                    selectedDate == null
-                        ? 'Escolher data'
-                        : formatDate(selectedDate!),
-                  ),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    if (selectedDate == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Selecione uma data')),
-                      );
-                      return;
-                    }
-                    String title = titleController.text;
-                    String content = contentController.text;
-                    if (title.isEmpty || content.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Preencha todos os campos'),
-                        ),
-                      );
-                      return;
-                    }
+        const SizedBox(height: 8),
+        Text(
+          'Escreva hoje para ler no futuro',
+          style: TextStyle(fontSize: 14, color: DefaultColors.textSecondary),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
 
-                    Letter letter = Letter(
-                      id: DateTime.now().microsecondsSinceEpoch.toString(),
-                      title: title,
-                      content: content,
-                      creationDate: DateTime.now(),
-                      openingDate: selectedDate!,
-                    );
-                    Navigator.pop(context, letter);
-                  },
-                  child: Text('Salvar'),
+  Widget letterForm() {
+    return Form(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          header(),
+          const SizedBox(height: 32),
+          TextFormField(
+            controller: titleController,
+            minLines: 1,
+            maxLines: null,
+            decoration: InputDecoration(
+              labelText: 'Título da Carta',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: contentController,
+            minLines: 5,
+            maxLines: null,
+            decoration: InputDecoration(
+              labelText: 'Sua mensagem',
+              alignLabelWithHint: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          InkWell(
+            onTap: () async {
+              DateTime? result = await showDatePicker(
+                context: context,
+                currentDate: selectedDate,
+                firstDate: DateTime.now(),
+                lastDate: DateTime(2100, 9, 7, 17, 30),
+              );
+              setState(() {
+                selectedDate = result;
+              });
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: <Widget>[
+                  const Icon(
+                    Icons.calendar_month,
+                    color: DefaultColors.primary,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    selectedDate == null
+                        ? 'Selecione quando a carta poderá ser aberta'
+                        : formatDate(selectedDate!),
+                    style: TextStyle(
+                      color: selectedDate == null
+                          ? DefaultColors.textSecondary
+                          : DefaultColors.text,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          Container(
+            decoration: BoxDecoration(
+              gradient: DefaultColors.primaryButtonGradient,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: DefaultColors.primary.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
+            child: ElevatedButton.icon(
+              label: Text(
+                'Enviar Carta',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              icon: const Icon(Icons.send_rounded, color: Colors.white),
+              iconAlignment: IconAlignment.end,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+              ),
+              onPressed: () {
+                if (selectedDate == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Selecione uma data')),
+                  );
+                  return;
+                }
+                String title = titleController.text;
+                String content = contentController.text;
+                if (title.isEmpty || content.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Preencha todos os campos')),
+                  );
+                  return;
+                }
+                Letter letter = Letter(
+                  id: DateTime.now().microsecondsSinceEpoch.toString(),
+                  title: title,
+                  content: content,
+                  creationDate: DateTime.now(),
+                  openingDate: selectedDate!,
+                  parentId: widget.parentId,
+                );
+                Navigator.pop(context, letter);
+              },
+            ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget content() {
+    return Center(
+      child: SingleChildScrollView(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600),
+          margin: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.95),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: letterForm(),
         ),
       ),
     );
@@ -105,19 +209,20 @@ class _NewLetterPageState extends State<NewLetterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: <Widget>[
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            ),
-            LetterForm(),
-          ],
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: DefaultColors.text),
+          onPressed: () => Navigator.pop(context),
         ),
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(gradient: DefaultColors.backgroundGradient),
+        child: content(),
       ),
     );
   }
