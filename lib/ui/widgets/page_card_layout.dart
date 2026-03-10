@@ -5,10 +5,7 @@ import '../../core/Colors.dart';
 class PageCardLayout extends StatelessWidget {
   final Widget child;
 
-  const PageCardLayout({
-    super.key,
-    required this.child,
-  });
+  const PageCardLayout({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
