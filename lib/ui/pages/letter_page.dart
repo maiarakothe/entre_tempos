@@ -39,10 +39,35 @@ class _LetterPageState extends State<LetterPage> {
           const Text("EntreTempos"),
         ],
       ),
-      actions: const <Widget>[
+      actions: <Widget>[
         Padding(
-          padding: EdgeInsets.only(right: 20),
-          child: Icon(Icons.person_outline),
+          padding: const EdgeInsets.only(right: 20),
+          child: PopupMenuButton<String>(
+            icon: const Icon(Icons.person_outline),
+            itemBuilder: (BuildContext context) =>
+                const <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    value: 'perfil',
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.person, size: 18),
+                        SizedBox(width: 8),
+                        Text('Perfil'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'sair',
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.logout, size: 18),
+                        SizedBox(width: 8),
+                        Text('Sair'),
+                      ],
+                    ),
+                  ),
+                ],
+          ),
         ),
       ],
     );
@@ -146,19 +171,7 @@ class _LetterPageState extends State<LetterPage> {
                     ),
                   ),
                   icon: Icon(Icons.edit, color: DefaultColors.cardLight),
-                  onPressed: () async {
-                    Letter? result = await Navigator.push(
-                      context,
-                      MaterialPageRoute<Letter>(
-                        builder: (BuildContext context) => NewLetterPage(),
-                      ),
-                    );
-                    if (result != null) {
-                      setState(() {
-                        letters.add(result);
-                      });
-                    }
-                  },
+                  onPressed: createLetter,
                 ),
               ],
             ],
