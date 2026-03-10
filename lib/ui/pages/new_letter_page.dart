@@ -1,6 +1,7 @@
 import 'package:entre_tempos/core/Colors.dart';
 import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/data/models/letter.dart';
+import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
 class NewLetterPage extends StatefulWidget {
@@ -182,30 +183,6 @@ class _NewLetterPageState extends State<NewLetterPage> {
     );
   }
 
-  Widget content() {
-    return Center(
-      child: SingleChildScrollView(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 600),
-          margin: const EdgeInsets.all(24),
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.95),
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: letterForm(),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -218,12 +195,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(gradient: DefaultColors.backgroundGradient),
-        child: content(),
-      ),
+      body: PageCardLayout(child: letterForm()),
     );
   }
 }
