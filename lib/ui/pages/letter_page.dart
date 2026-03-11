@@ -80,7 +80,7 @@ class _LetterPageState extends State<LetterPage> {
         padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(
           gradient: DefaultColors.colorTest,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: DefaultBorders.card,
           boxShadow: <BoxShadow>[
             BoxShadow(
               color: DefaultColors.primary.withValues(alpha: 0.25),
@@ -126,7 +126,7 @@ class _LetterPageState extends State<LetterPage> {
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: DefaultBorders.button,
                     ),
                   ),
                 ),
@@ -159,7 +159,7 @@ class _LetterPageState extends State<LetterPage> {
                     backgroundColor: DefaultColors.primary,
                     padding: const EdgeInsets.all(16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: DefaultBorders.button,
                     ),
                   ),
                   label: Text(
@@ -206,14 +206,14 @@ class _LetterPageState extends State<LetterPage> {
           selectedIndex = index;
         });
       },
-      borderRadius: BorderRadius.circular(28),
+      borderRadius: DefaultBorders.button,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
           gradient: active ? DefaultColors.colorTest : null,
           color: active ? null : DefaultColors.cardLight,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: DefaultBorders.button,
           border: active ? null : Border.all(color: Colors.grey.shade200),
           boxShadow: active
               ? <BoxShadow>[
@@ -293,7 +293,7 @@ class _LetterPageState extends State<LetterPage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: DefaultBorders.card,
         boxShadow: <BoxShadow>[
           BoxShadow(
             blurRadius: 20,
@@ -394,7 +394,7 @@ class _LetterPageState extends State<LetterPage> {
                     ? DefaultColors.textSecondary
                     : Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: DefaultBorders.button,
                 ),
               ),
               label: Text(

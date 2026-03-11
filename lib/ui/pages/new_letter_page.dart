@@ -60,7 +60,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
             decoration: InputDecoration(
               labelText: 'Título da Carta',
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: DefaultBorders.container,
               ),
             ),
           ),
@@ -73,7 +73,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
               labelText: 'Sua mensagem',
               alignLabelWithHint: true,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: DefaultBorders.container,
               ),
             ),
           ),
@@ -95,7 +95,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: DefaultBorders.container,
               ),
               child: Row(
                 children: <Widget>[
@@ -123,7 +123,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
           Container(
             decoration: BoxDecoration(
               gradient: DefaultColors.primaryButtonGradient,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: DefaultBorders.button,
               boxShadow: <BoxShadow>[
                 BoxShadow(
                   color: DefaultColors.primary.withValues(alpha: 0.3),
@@ -148,7 +148,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
                 shadowColor: Colors.transparent,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: DefaultBorders.button,
                 ),
               ),
               onPressed: () {

@@ -2,6 +2,7 @@ import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/Colors.dart';
+import '../../core/utils.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,9 +20,7 @@ class _LoginPageState extends State<LoginPage> {
       children: <Widget>[
         Text(
           'entreTempos',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 5),
         Text(
@@ -44,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
               labelText: 'Email',
               prefixIcon: const Icon(Icons.email_outlined),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: DefaultBorders.container,
               ),
             ),
           ),
@@ -56,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
               labelText: 'Senha',
               prefixIcon: const Icon(Icons.lock_outline),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: DefaultBorders.container,
               ),
             ),
           ),
@@ -68,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {},
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
+                    borderRadius: DefaultBorders.button,
                 ),
                 padding: EdgeInsets.zero,
               ),
@@ -77,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                   gradient: LinearGradient(
                     colors: <Color>[Color(0xFFFF6FB1), Color(0xFF6A8CFF)],
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderRadius: DefaultBorders.button,
                 ),
                 child: const Center(
                   child: Text(

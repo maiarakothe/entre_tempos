@@ -106,7 +106,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
     return Container(
       decoration: BoxDecoration(
         gradient: DefaultColors.primaryButtonGradient,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: DefaultBorders.button,
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: DefaultColors.primary.withValues(alpha: 0.3),
@@ -130,7 +130,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
           shadowColor: Colors.transparent,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: DefaultBorders.button,
           ),
         ),
         onPressed: () async {
