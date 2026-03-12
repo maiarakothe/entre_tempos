@@ -14,6 +14,9 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
+
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -67,10 +70,20 @@ class _SignupPageState extends State<SignupPage> {
           SizedBox(height: 10),
           TextFormField(
             controller: passwordController,
-            obscureText: true,
+            obscureText: obscurePassword,
             decoration: InputDecoration(
               labelText: 'Senha',
               prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  obscurePassword ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    obscurePassword = !obscurePassword;
+                  });
+                },
+              ),
               border: OutlineInputBorder(
                 borderRadius: DefaultBorders.container,
               ),
@@ -79,10 +92,22 @@ class _SignupPageState extends State<SignupPage> {
           SizedBox(height: 10),
           TextFormField(
             controller: confirmPasswordController,
-            obscureText: true,
+            obscureText: obscureConfirmPassword,
             decoration: InputDecoration(
               labelText: 'Confirmar senha',
               prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  obscureConfirmPassword
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    obscureConfirmPassword = !obscureConfirmPassword;
+                  });
+                },
+              ),
               border: OutlineInputBorder(
                 borderRadius: DefaultBorders.container,
               ),

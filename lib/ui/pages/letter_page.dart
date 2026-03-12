@@ -187,7 +187,7 @@ class _LetterPageState extends State<LetterPage> {
       child: Padding(
         padding: const EdgeInsets.only(left: 20),
         child: Text(
-          '${letters.length} cartas',
+          '${filteredLetters.length} cartas',
           style: TextStyle(
             fontSize: 15,
             color: DefaultColors.textSecondary,
@@ -196,6 +196,24 @@ class _LetterPageState extends State<LetterPage> {
         ),
       ),
     );
+  }
+
+  List<Letter> get filteredLetters {
+    if (selectedIndex == 0) {
+      return letters;
+    }
+    if (selectedIndex == 1) {
+      return letters.where((Letter letter) {
+        return DateTime.now().isBefore(letter.openingDate);
+      }).toList();
+    }
+    if (selectedIndex == 2) {
+      return letters.where((Letter letter) {
+        return DateTime.now().isAfter(letter.openingDate);
+      }).toList();
+    }
+
+    return letters;
   }
 
   Widget filterItem(String label, IconData icon, int index) {
@@ -436,43 +454,47 @@ class _LetterPageState extends State<LetterPage> {
     }
   }
 
+  Widget content() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          slogan(),
+          newLetter(),
+          const SizedBox(height: 5),
+          textCount(),
+          const SizedBox(height: 10),
+          filters(),
+          const SizedBox(height: 20),
+          if (letters.isEmpty)
+            emptyState()
+          else
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: filteredLetters.length,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 500,
+                  mainAxisExtent: 240,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+                itemBuilder: (_, int i) => letterCard(filteredLetters[i]),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: DefaultColors.pageColor,
       appBar: header(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            slogan(),
-            newLetter(),
-            const SizedBox(height: 5),
-            textCount(),
-            const SizedBox(height: 10),
-            filters(),
-            const SizedBox(height: 20),
-            if (letters.isEmpty)
-              emptyState()
-            else
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: letters.length,
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 500,
-                    mainAxisExtent: 240,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                  ),
-                  itemBuilder: (_, int i) => letterCard(letters[i]),
-                ),
-              ),
-          ],
-        ),
-      ),
+      body: content(),
     );
   }
 }

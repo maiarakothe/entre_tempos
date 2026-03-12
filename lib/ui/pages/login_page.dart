@@ -14,6 +14,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool obscurePassword = true;
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -54,10 +56,20 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(height: 10),
           TextFormField(
             controller: passwordController,
-            obscureText: true,
+            obscureText: obscurePassword,
             decoration: InputDecoration(
               labelText: 'Senha',
               prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  obscurePassword ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    obscurePassword = !obscurePassword;
+                  });
+                },
+              ),
               border: OutlineInputBorder(
                 borderRadius: DefaultBorders.container,
               ),
