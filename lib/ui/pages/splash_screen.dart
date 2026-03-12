@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/Colors.dart';
-import 'letter_page.dart';
 import 'login_page.dart';
 
 class SplashPage extends StatefulWidget {

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/Colors.dart';
 import '../../data/models/letter.dart';
+import '../widgets/app_bar_widget.dart';
 
 class LetterPage extends StatefulWidget {
   const LetterPage({super.key});
@@ -17,61 +18,6 @@ class _LetterPageState extends State<LetterPage> {
   List<Letter> letters = <Letter>[];
   int selectedIndex = 0;
   bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
-
-  PreferredSizeWidget header() {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      title: Row(
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              gradient: DefaultColors.colorTest,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(
-              Icons.mail,
-              size: 18,
-              color: DefaultColors.cardLight,
-            ),
-          ),
-          const SizedBox(width: 8),
-          const Text("EntreTempos"),
-        ],
-      ),
-      actions: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(right: 20),
-          child: PopupMenuButton<String>(
-            icon: const Icon(Icons.person_outline),
-            itemBuilder: (BuildContext context) =>
-                const <PopupMenuEntry<String>>[
-                  PopupMenuItem<String>(
-                    value: 'perfil',
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.person, size: 18),
-                        SizedBox(width: 8),
-                        Text('Perfil'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'sair',
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.logout, size: 18),
-                        SizedBox(width: 8),
-                        Text('Sair'),
-                      ],
-                    ),
-                  ),
-                ],
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget slogan() {
     return Padding(
@@ -493,7 +439,7 @@ class _LetterPageState extends State<LetterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: DefaultColors.pageColor,
-      appBar: header(),
+      appBar: AppBarWidget(),
       body: content(),
     );
   }
