@@ -1,8 +1,10 @@
+import 'package:entre_tempos/ui/pages/signup_page.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/Colors.dart';
 import '../../core/utils.dart';
+import 'letter_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,7 +22,9 @@ class _LoginPageState extends State<LoginPage> {
       children: <Widget>[
         Text(
           'entreTempos',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 5),
         Text(
@@ -64,10 +68,15 @@ class _LoginPageState extends State<LoginPage> {
             width: double.infinity,
             height: 48,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute<dynamic>(builder: (_) => LetterPage()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                    borderRadius: DefaultBorders.button,
+                  borderRadius: DefaultBorders.button,
                 ),
                 padding: EdgeInsets.zero,
               ),
@@ -76,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                   gradient: LinearGradient(
                     colors: <Color>[Color(0xFFFF6FB1), Color(0xFF6A8CFF)],
                   ),
-                    borderRadius: DefaultBorders.button,
+                  borderRadius: DefaultBorders.button,
                 ),
                 child: const Center(
                   child: Text(
@@ -109,7 +118,15 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('Não tem conta?'),
-              TextButton(child: Text('Criar conta'), onPressed: () {}),
+              TextButton(
+                child: Text('Criar conta'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<dynamic>(builder: (_) => SignupPage()),
+                  );
+                },
+              ),
             ],
           ),
         ],

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/Colors.dart';
 import '../widgets/page_card_layout.dart';
+import 'letter_page.dart';
+import 'login_page.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -22,7 +24,9 @@ class _SignupPageState extends State<SignupPage> {
       children: <Widget>[
         Text(
           'entreTempos',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 5),
         Text(
@@ -89,7 +93,12 @@ class _SignupPageState extends State<SignupPage> {
             width: double.infinity,
             height: 48,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<dynamic>(builder: (_) => LetterPage()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: DefaultBorders.button,
@@ -133,7 +142,15 @@ class _SignupPageState extends State<SignupPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('Já tem conta?'),
-              TextButton(child: Text('Entrar'), onPressed: () {}),
+              TextButton(
+                child: Text('Entrar'),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute<dynamic>(builder: (_) => LoginPage()),
+                  );
+                },
+              ),
             ],
           ),
         ],
