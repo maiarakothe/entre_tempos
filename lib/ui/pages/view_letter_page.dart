@@ -105,7 +105,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
   Widget replyButton() {
     return Container(
       decoration: BoxDecoration(
-        gradient: DefaultColors.primaryButtonGradient,
+        gradient: DefaultColors.colorTest,
         borderRadius: DefaultBorders.button,
         boxShadow: <BoxShadow>[
           BoxShadow(

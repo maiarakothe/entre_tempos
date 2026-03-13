@@ -30,7 +30,6 @@ class _NewLetterPageState extends State<NewLetterPage> {
         Text(
           'Escrever Nova Carta',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: DefaultColors.primary,
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,
@@ -122,7 +121,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
           const SizedBox(height: 30),
           Container(
             decoration: BoxDecoration(
-              gradient: DefaultColors.primaryButtonGradient,
+              gradient: DefaultColors.colorTest,
               borderRadius: DefaultBorders.button,
               boxShadow: <BoxShadow>[
                 BoxShadow(

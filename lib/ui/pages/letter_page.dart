@@ -100,24 +100,32 @@ class _LetterPageState extends State<LetterPage> {
               ),
               Spacer(),
               if (!isMobile) ...<Widget>[
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: DefaultColors.primary,
-                    padding: const EdgeInsets.all(16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: DefaultBorders.button,
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    gradient: DefaultColors.colorTest,
+                    borderRadius: DefaultBorders.button,
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: createLetter,
+                    icon: const Icon(Icons.edit, color: Colors.white),
+                    label: const Text(
+                      "Escrever carta",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: DefaultBorders.button,
+                      ),
                     ),
                   ),
-                  label: Text(
-                    'Escrever Carta',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: DefaultColors.cardLight,
-                    ),
-                  ),
-                  icon: Icon(Icons.edit, color: DefaultColors.cardLight),
-                  onPressed: createLetter,
                 ),
               ],
             ],
@@ -128,12 +136,13 @@ class _LetterPageState extends State<LetterPage> {
   }
 
   Widget textCount() {
+    int num = filteredLetters.length;
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
         padding: const EdgeInsets.only(left: 20),
         child: Text(
-          '${filteredLetters.length} cartas',
+          num == 1 ? '$num carta' : '$num cartas',
           style: TextStyle(
             fontSize: 15,
             color: DefaultColors.textSecondary,
@@ -244,6 +253,24 @@ class _LetterPageState extends State<LetterPage> {
             ),
             SizedBox(height: 6),
             Text("Que tal escrever sua primeira mensagem?"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget emptyFilteredState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(50),
+        child: Column(
+          children: <Widget>[
+            Icon( selectedIndex == 1 ? Icons.lock_outline_sharp : Icons.mark_email_read_outlined, size: 60,),
+            const SizedBox(height: 12),
+            Text(
+              selectedIndex == 1 ? "Nenhuma carta bloqueada" : "Nenhuma carta liberada",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, ),
+            ),
           ],
         ),
       ),
@@ -414,6 +441,8 @@ class _LetterPageState extends State<LetterPage> {
           const SizedBox(height: 20),
           if (letters.isEmpty)
             emptyState()
+          else if (filteredLetters.isEmpty)
+            emptyFilteredState()
           else
             Padding(
               padding: const EdgeInsets.all(20),
