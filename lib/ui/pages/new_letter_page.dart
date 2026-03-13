@@ -103,15 +103,17 @@ class _NewLetterPageState extends State<NewLetterPage> {
                     color: DefaultColors.primary,
                   ),
                   const SizedBox(width: 12),
-                  Text(
-                    selectedDate == null
-                        ? 'Selecione quando a carta poderá ser aberta'
-                        : formatDate(selectedDate!),
-                    style: TextStyle(
-                      color: selectedDate == null
-                          ? DefaultColors.textSecondary
-                          : DefaultColors.text,
-                      fontSize: 16,
+                  Expanded(
+                    child: Text(
+                      selectedDate == null
+                          ? 'Selecione quando a carta poderá ser aberta'
+                          : formatDate(selectedDate!),
+                      style: TextStyle(
+                        color: selectedDate == null
+                            ? DefaultColors.textSecondary
+                            : DefaultColors.text,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ],

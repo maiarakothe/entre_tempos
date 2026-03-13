@@ -37,6 +37,85 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void showRecoverPasswordDialog(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Recuperar senha'),
+          backgroundColor: DefaultColors.cardLight,
+          shape: RoundedRectangleBorder(borderRadius: DefaultBorders.card),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text(
+                'Digite seu e-mail para receber as instruções de recuperação',
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  labelText: 'E-mail',
+                  prefixIcon: Icon(Icons.email_outlined),
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                  border: OutlineInputBorder(
+                    borderRadius: DefaultBorders.container,
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                gradient: DefaultColors.colorTest,
+                borderRadius: DefaultBorders.button,
+              ),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: DefaultBorders.button,
+                  ),
+                ),
+                onPressed: () {
+                  final String email = emailController.text;
+                  if (email.isNotEmpty) {
+                    print('Enviar recuperação para: $email');
+
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Instruções enviadas para seu e-mail'),
+                      ),
+                    );
+                  }
+                },
+                child: const Text(
+                  'Enviar',
+                  style: TextStyle(color: DefaultColors.cardLight),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget content() {
     return Form(
       child: Column(
@@ -119,7 +198,12 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SizedBox(height: 10),
-          TextButton(child: Text('Esqueci minha senha'), onPressed: () {}),
+          TextButton(
+            child: Text('Esqueci minha senha'),
+            onPressed: () {
+              showRecoverPasswordDialog(context);
+            },
+          ),
           SizedBox(height: 5),
           Row(
             children: <Widget>[
