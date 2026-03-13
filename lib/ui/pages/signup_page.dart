@@ -50,29 +50,37 @@ class _SignupPageState extends State<SignupPage> {
             controller: nameController,
             decoration: InputDecoration(
               labelText: 'Nome',
+              filled: true,
+              fillColor: Colors.grey.shade100,
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: DefaultBorders.container,
+                borderSide: BorderSide.none,
               ),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 14),
           TextFormField(
             controller: emailController,
             decoration: InputDecoration(
               labelText: 'Email',
+              filled: true,
+              fillColor: Colors.grey.shade100,
               prefixIcon: const Icon(Icons.email_outlined),
               border: OutlineInputBorder(
                 borderRadius: DefaultBorders.container,
+                borderSide: BorderSide.none,
               ),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 14),
           TextFormField(
             controller: passwordController,
             obscureText: obscurePassword,
             decoration: InputDecoration(
               labelText: 'Senha',
+              filled: true,
+              fillColor: Colors.grey.shade100,
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -86,16 +94,19 @@ class _SignupPageState extends State<SignupPage> {
               ),
               border: OutlineInputBorder(
                 borderRadius: DefaultBorders.container,
+                borderSide: BorderSide.none,
               ),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 14),
           TextFormField(
             controller: confirmPasswordController,
             obscureText: obscureConfirmPassword,
             decoration: InputDecoration(
               labelText: 'Confirmar senha',
-              prefixIcon: const Icon(Icons.lock_outline),
+              prefixIcon: const Icon((Icons.lock_reset_outlined)),
+              filled: true,
+              fillColor: Colors.grey.shade100,
               suffixIcon: IconButton(
                 icon: Icon(
                   obscureConfirmPassword
@@ -110,10 +121,11 @@ class _SignupPageState extends State<SignupPage> {
               ),
               border: OutlineInputBorder(
                 borderRadius: DefaultBorders.container,
+                borderSide: BorderSide.none,
               ),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             height: 48,

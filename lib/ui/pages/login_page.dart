@@ -47,18 +47,23 @@ class _LoginPageState extends State<LoginPage> {
             controller: emailController,
             decoration: InputDecoration(
               labelText: 'Email',
+              filled: true,
+              fillColor: Colors.grey.shade100,
               prefixIcon: const Icon(Icons.email_outlined),
               border: OutlineInputBorder(
                 borderRadius: DefaultBorders.container,
+                borderSide: BorderSide.none,
               ),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 14),
           TextFormField(
             controller: passwordController,
             obscureText: obscurePassword,
             decoration: InputDecoration(
               labelText: 'Senha',
+              filled: true,
+              fillColor: Colors.grey.shade100,
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -72,10 +77,11 @@ class _LoginPageState extends State<LoginPage> {
               ),
               border: OutlineInputBorder(
                 borderRadius: DefaultBorders.container,
+                borderSide: BorderSide.none,
               ),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             height: 48,
