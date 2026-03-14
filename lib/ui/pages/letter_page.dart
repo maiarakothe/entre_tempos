@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../core/Colors.dart';
 import '../../data/models/letter.dart';
 import '../widgets/app_bar_widget.dart';
+import '../widgets/app_button.dart';
 
 class LetterPage extends StatefulWidget {
   const LetterPage({super.key});
@@ -100,32 +101,11 @@ class _LetterPageState extends State<LetterPage> {
               ),
               Spacer(),
               if (!isMobile) ...<Widget>[
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    gradient: DefaultColors.colorTest,
-                    borderRadius: DefaultBorders.button,
-                  ),
-                  child: ElevatedButton.icon(
-                    onPressed: createLetter,
-                    icon: const Icon(Icons.edit, color: Colors.white),
-                    label: const Text(
-                      "Escrever carta",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: DefaultBorders.button,
-                      ),
-                    ),
-                  ),
+                AppButton(
+                  text: 'Escrever carta',
+                  icon: Icons.edit,
+                  fullWidth: false,
+                  onPressed: createLetter,
                 ),
               ],
             ],
@@ -265,11 +245,18 @@ class _LetterPageState extends State<LetterPage> {
         padding: const EdgeInsets.all(50),
         child: Column(
           children: <Widget>[
-            Icon( selectedIndex == 1 ? Icons.lock_outline_sharp : Icons.mark_email_read_outlined, size: 60,),
+            Icon(
+              selectedIndex == 1
+                  ? Icons.lock_outline_sharp
+                  : Icons.mark_email_read_outlined,
+              size: 60,
+            ),
             const SizedBox(height: 12),
             Text(
-              selectedIndex == 1 ? "Nenhuma carta bloqueada" : "Nenhuma carta liberada",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, ),
+              selectedIndex == 1
+                  ? "Nenhuma carta bloqueada"
+                  : "Nenhuma carta liberada",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ],
         ),

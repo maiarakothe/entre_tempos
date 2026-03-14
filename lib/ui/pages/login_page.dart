@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/Colors.dart';
 import '../../core/utils.dart';
+import '../widgets/app_button.dart';
 import 'letter_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -75,40 +76,22 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.pop(context);
               },
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                gradient: DefaultColors.colorTest,
-                borderRadius: DefaultBorders.button,
-              ),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: DefaultBorders.button,
-                  ),
-                ),
-                onPressed: () {
-                  final String email = emailController.text;
-                  if (email.isNotEmpty) {
-                    print('Enviar recuperação para: $email');
+            AppButton(
+              text: 'Enviar',
+              fullWidth: false,
+              onPressed: () {
+                final String email = emailController.text;
+                if (email.isNotEmpty) {
+                  print('Enviar recuperação para: $email');
 
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Instruções enviadas para seu e-mail'),
-                      ),
-                    );
-                  }
-                },
-                child: const Text(
-                  'Enviar',
-                  style: TextStyle(color: DefaultColors.cardLight),
-                ),
-              ),
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Instruções enviadas para seu e-mail'),
+                    ),
+                  );
+                }
+              },
             ),
           ],
         );
@@ -161,41 +144,14 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute<dynamic>(builder: (_) => LetterPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: DefaultBorders.button,
-                ),
-                padding: EdgeInsets.zero,
-              ),
-              child: Ink(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: <Color>[Color(0xFFFF6FB1), Color(0xFF6A8CFF)],
-                  ),
-                  borderRadius: DefaultBorders.button,
-                ),
-                child: const Center(
-                  child: Text(
-                    "Entrar",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          AppButton(
+            text: 'Entrar',
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute<dynamic>(builder: (_) => LetterPage()),
+              );
+            },
           ),
           SizedBox(height: 10),
           TextButton(

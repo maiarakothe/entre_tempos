@@ -2,6 +2,7 @@ import 'package:entre_tempos/core/utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/Colors.dart';
+import '../widgets/app_button.dart';
 import '../widgets/page_card_layout.dart';
 import 'letter_page.dart';
 import 'login_page.dart';
@@ -126,41 +127,14 @@ class _SignupPageState extends State<SignupPage> {
             ),
           ),
           SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<dynamic>(builder: (_) => LetterPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: DefaultBorders.button,
-                ),
-                padding: EdgeInsets.zero,
-              ),
-              child: Ink(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: <Color>[Color(0xFFFF6FB1), Color(0xFF6A8CFF)],
-                  ),
-                  borderRadius: DefaultBorders.button,
-                ),
-                child: const Center(
-                  child: Text(
-                    "Entrar",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          AppButton(
+            text: 'Entrar',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<dynamic>(builder: (_) => LetterPage()),
+              );
+            },
           ),
           SizedBox(height: 10),
           SizedBox(height: 5),

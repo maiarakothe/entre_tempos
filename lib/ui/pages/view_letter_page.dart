@@ -1,5 +1,6 @@
 import 'package:entre_tempos/core/Colors.dart';
 import 'package:entre_tempos/core/utils.dart';
+import 'package:entre_tempos/ui/widgets/app_button.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
@@ -115,24 +116,9 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
           ),
         ],
       ),
-      child: ElevatedButton.icon(
-        icon: const Icon(Icons.reply, color: Colors.white),
-        label: const Text(
-          'Responder essa carta',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: DefaultBorders.button,
-          ),
-        ),
+      child: AppButton(
+        text: 'Responder essa carta',
+        icon: Icons.reply,
         onPressed: () async {
           Letter? newLetter = await Navigator.push(
             context,
@@ -193,9 +179,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: PageCardLayout(
-        child: letterContent(),
-      ),
+      body: PageCardLayout(child: letterContent()),
     );
   }
 }

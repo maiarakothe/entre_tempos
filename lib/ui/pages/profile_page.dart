@@ -1,3 +1,4 @@
+import 'package:entre_tempos/ui/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/Colors.dart';
@@ -77,26 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
-          child: ElevatedButton.icon(
-            label: Text(
-              'Editar Perfil',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            iconAlignment: IconAlignment.end,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: DefaultBorders.button,
-              ),
-            ),
-            onPressed: () {},
-          ),
+          child: AppButton(text: 'Editar Perfil', onPressed: () {}),
         ),
       ],
     );
