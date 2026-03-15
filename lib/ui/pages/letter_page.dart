@@ -7,6 +7,7 @@ import '../../core/Colors.dart';
 import '../../data/models/letter.dart';
 import '../widgets/app_bar_widget.dart';
 import '../widgets/app_button.dart';
+import '../widgets/envelope_opening_animation.dart';
 
 class LetterPage extends StatefulWidget {
   const LetterPage({super.key});
@@ -402,7 +403,20 @@ class _LetterPageState extends State<LetterPage> {
     final dynamic result = await Navigator.push(
       context,
       MaterialPageRoute<dynamic>(
-        builder: (_) => ViewLetterPage(letter: letter, allLetters: letters),
+        builder: (_) => EnvelopeOpeningAnimation(
+          letterTitle: letter.title,
+          onOpen: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute<dynamic>(
+                builder: (_) => ViewLetterPage(
+                  letter: letter,
+                  allLetters: letters,
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
     if (result != null && result is Letter) {
