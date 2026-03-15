@@ -1,10 +1,10 @@
-import 'package:entre_tempos/core/Colors.dart';
+import 'package:entre_tempos/core/default_colors.dart';
 import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/ui/widgets/app_button.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
-import '../../data/models/letter.dart';
+import '../../../data/models/letter.dart';
 import 'new_letter_page.dart';
 
 class ViewLetterPage extends StatefulWidget {
@@ -14,14 +14,33 @@ class ViewLetterPage extends StatefulWidget {
     required this.allLetters,
   });
 
-  @override
-  State<ViewLetterPage> createState() => _ViewLetterPageState();
   final Letter letter;
   final List<Letter> allLetters;
+
+  @override
+  State<ViewLetterPage> createState() => _ViewLetterPageState();
 }
 
 class _ViewLetterPageState extends State<ViewLetterPage> {
   Letter? originalLetter;
+
+  @override
+  void initState() {
+    super.initState();
+    _findOriginalLetter();
+  }
+
+  void _findOriginalLetter() {
+    if (widget.letter.parentId != null) {
+      try {
+        originalLetter = widget.allLetters.firstWhere(
+          (Letter l) => l.id == widget.letter.parentId,
+        );
+      } catch (e) {
+        print('Carta pai não encontrada');
+      }
+    }
+  }
 
   bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
 
@@ -135,16 +154,6 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
   }
 
   Widget letterContent() {
-    try {
-      if (widget.letter.parentId != null) {
-        originalLetter = widget.allLetters.firstWhere(
-          (Letter l) => l.id == widget.letter.parentId,
-        );
-      }
-    } catch (e) {
-      print('Carta pai não encontrada');
-    }
-
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 800),
       child: Column(

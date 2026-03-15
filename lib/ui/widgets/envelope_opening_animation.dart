@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:entre_tempos/core/Colors.dart';
+import 'package:entre_tempos/core/default_colors.dart';
 import 'package:flutter/material.dart';
 
 class EnvelopeOpeningAnimation extends StatefulWidget {

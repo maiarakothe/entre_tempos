@@ -1,13 +1,13 @@
 import 'package:entre_tempos/core/utils.dart';
-import 'package:entre_tempos/ui/pages/new_letter_page.dart';
-import 'package:entre_tempos/ui/pages/view_letter_page.dart';
+import 'package:entre_tempos/ui/pages/letters/view_letter_page.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/Colors.dart';
-import '../../data/models/letter.dart';
-import '../widgets/app_bar_widget.dart';
-import '../widgets/app_button.dart';
-import '../widgets/envelope_opening_animation.dart';
+import '../../../core/default_colors.dart';
+import '../../../data/models/letter.dart';
+import '../../widgets/app_bar_widget.dart';
+import '../../widgets/app_button.dart';
+import '../../widgets/envelope_opening_animation.dart';
+import 'new_letter_page.dart';
 
 class LetterPage extends StatefulWidget {
   const LetterPage({super.key});
@@ -409,10 +409,8 @@ class _LetterPageState extends State<LetterPage> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute<dynamic>(
-                builder: (_) => ViewLetterPage(
-                  letter: letter,
-                  allLetters: letters,
-                ),
+                builder: (_) =>
+                    ViewLetterPage(letter: letter, allLetters: letters),
               ),
             );
           },

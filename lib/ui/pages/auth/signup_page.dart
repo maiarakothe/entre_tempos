@@ -1,10 +1,10 @@
 import 'package:entre_tempos/core/utils.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/Colors.dart';
-import '../widgets/app_button.dart';
-import '../widgets/page_card_layout.dart';
-import 'letter_page.dart';
+import '../../../core/default_colors.dart';
+import '../../widgets/app_button.dart';
+import '../../widgets/page_card_layout.dart';
+import '../letters/letter_page.dart';
 import 'login_page.dart';
 
 class SignupPage extends StatefulWidget {

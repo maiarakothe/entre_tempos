@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/Colors.dart';
+import '../../core/default_colors.dart';
 import '../../core/utils.dart';
 
 class AppButton extends StatefulWidget {

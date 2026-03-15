@@ -1,11 +1,11 @@
-import 'package:entre_tempos/ui/pages/signup_page.dart';
+import 'package:entre_tempos/ui/pages/auth/signup_page.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/Colors.dart';
-import '../../core/utils.dart';
-import '../widgets/app_button.dart';
-import 'letter_page.dart';
+import '../../../core/default_colors.dart';
+import '../../../core/utils.dart';
+import '../../widgets/app_button.dart';
+import '../letters/letter_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

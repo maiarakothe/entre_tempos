@@ -1,10 +1,10 @@
 import 'package:entre_tempos/ui/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/Colors.dart';
-import '../../core/utils.dart';
-import '../widgets/app_bar_widget.dart';
-import '../widgets/page_card_layout.dart';
+import '../../../core/default_colors.dart';
+import '../../../core/utils.dart';
+import '../../widgets/app_bar_widget.dart';
+import '../../widgets/page_card_layout.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

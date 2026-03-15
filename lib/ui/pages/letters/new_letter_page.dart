@@ -1,10 +1,10 @@
-import 'package:entre_tempos/core/Colors.dart';
+import 'package:entre_tempos/core/default_colors.dart';
 import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/data/models/letter.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/app_button.dart';
+import '../../widgets/app_button.dart';
 
 class NewLetterPage extends StatefulWidget {
   final String? parentId;

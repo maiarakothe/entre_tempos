@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/Colors.dart';
-import '../pages/profile_page.dart';
+import '../../core/default_colors.dart';
+import '../pages/profile/profile_page.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   const AppBarWidget({super.key});
