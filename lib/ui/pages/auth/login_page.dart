@@ -1,11 +1,10 @@
-import 'package:entre_tempos/ui/pages/auth/signup_page.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
+import '../routes/routes.dart';
 import '../../../core/default_colors.dart';
 import '../../../core/utils.dart';
 import '../../widgets/app_button.dart';
-import '../letters/letter_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -147,10 +146,7 @@ class _LoginPageState extends State<LoginPage> {
           AppButton(
             text: 'Entrar',
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute<dynamic>(builder: (_) => LetterPage()),
-              );
+              Navigator.pushReplacementNamed(context, AppRoutes.home);
             },
           ),
           SizedBox(height: 10),
@@ -179,10 +175,7 @@ class _LoginPageState extends State<LoginPage> {
               TextButton(
                 child: Text('Criar conta'),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<dynamic>(builder: (_) => SignupPage()),
-                  );
+                  Navigator.pushReplacementNamed(context, AppRoutes.signup);
                 },
               ),
             ],

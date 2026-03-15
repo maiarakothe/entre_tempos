@@ -4,8 +4,8 @@ import 'package:entre_tempos/ui/widgets/app_button.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
+import '../routes/routes.dart';
 import '../../../data/models/letter.dart';
-import 'new_letter_page.dart';
 
 class ViewLetterPage extends StatefulWidget {
   const ViewLetterPage({
@@ -52,13 +52,12 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: InkWell(
               onTap: () {
-                Navigator.push(
+                Navigator.pushNamed(
                   context,
-                  MaterialPageRoute<dynamic>(
-                    builder: (BuildContext context) => ViewLetterPage(
-                      letter: originalLetter!,
-                      allLetters: widget.allLetters,
-                    ),
+                  AppRoutes.viewLetter,
+                  arguments: ViewLetterArgs(
+                    letter: originalLetter!,
+                    allLetters: widget.allLetters,
                   ),
                 );
               },
@@ -139,11 +138,10 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
         text: 'Responder essa carta',
         icon: Icons.reply,
         onPressed: () async {
-          Letter? newLetter = await Navigator.push(
+          final Object? newLetter = await Navigator.pushNamed(
             context,
-            MaterialPageRoute<Letter>(
-              builder: (_) => NewLetterPage(parentId: widget.letter.id),
-            ),
+            AppRoutes.newLetter,
+            arguments: widget.letter.id,
           );
           if (newLetter != null) {
             Navigator.pop(context, newLetter);

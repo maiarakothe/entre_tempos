@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../pages/routes/routes.dart';
 import '../../core/default_colors.dart';
-import '../pages/profile/profile_page.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   const AppBarWidget({super.key});
@@ -45,12 +45,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 onTap: () {
                   Future<dynamic>.delayed(Duration.zero, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<dynamic>(
-                        builder: (_) => const ProfilePage(),
-                      ),
-                    );
+                    Navigator.pushNamed(context, AppRoutes.profile);
                   });
                 },
               ),

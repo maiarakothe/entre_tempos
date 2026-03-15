@@ -1,11 +1,13 @@
-import 'package:entre_tempos/ui/pages/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'ui/pages/routes/routes.dart';
 
 void main() {
   runApp(
     MaterialApp(
-      home: const SplashPage(),
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: AppRoutes.generateRoute,
       debugShowCheckedModeBanner: false,
       locale: const Locale('pt', 'BR'),
       supportedLocales: const <Locale>[Locale('pt', 'BR')],

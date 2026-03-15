@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/default_colors.dart';
+import '../routes/routes.dart';
 import '../auth/login_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -22,10 +23,7 @@ class _SplashPageState extends State<SplashPage>
       duration: const Duration(seconds: 2),
     )..forward();
     Future<dynamic>.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute<dynamic>(builder: (_) => const LoginPage()),
-      );
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
     });
   }
 

@@ -1,13 +1,11 @@
 import 'package:entre_tempos/core/utils.dart';
-import 'package:entre_tempos/ui/pages/letters/view_letter_page.dart';
 import 'package:flutter/material.dart';
 
+import '../routes/routes.dart';
 import '../../../core/default_colors.dart';
 import '../../../data/models/letter.dart';
 import '../../widgets/app_bar_widget.dart';
 import '../../widgets/app_button.dart';
-import '../../widgets/envelope_opening_animation.dart';
-import 'new_letter_page.dart';
 
 class LetterPage extends StatefulWidget {
   const LetterPage({super.key});
@@ -388,33 +386,30 @@ class _LetterPageState extends State<LetterPage> {
   }
 
   Future<void> createLetter() async {
-    final Letter? result = await Navigator.push(
-      context,
-      MaterialPageRoute<Letter>(builder: (_) => NewLetterPage()),
-    );
+    final Object? result = await Navigator.pushNamed(context, AppRoutes.newLetter);
     if (result != null) {
       setState(() {
-        letters.add(result);
+        letters.add(result as Letter);
       });
     }
   }
 
   void openLetter(Letter letter) async {
-    final dynamic result = await Navigator.push(
+    final dynamic result = await Navigator.pushNamed(
       context,
-      MaterialPageRoute<dynamic>(
-        builder: (_) => EnvelopeOpeningAnimation(
-          letterTitle: letter.title,
-          onOpen: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute<dynamic>(
-                builder: (_) =>
-                    ViewLetterPage(letter: letter, allLetters: letters),
-              ),
-            );
-          },
-        ),
+      AppRoutes.envelopeAnimation,
+      arguments: EnvelopeArgs(
+        letterTitle: letter.title,
+        onOpen: () {
+          Navigator.pushReplacementNamed(
+            context,
+            AppRoutes.viewLetter,
+            arguments: ViewLetterArgs(
+              letter: letter,
+              allLetters: letters,
+            ),
+          );
+        },
       ),
     );
     if (result != null && result is Letter) {
