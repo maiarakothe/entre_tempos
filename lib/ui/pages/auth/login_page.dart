@@ -43,7 +43,21 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Recuperar senha'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text('Recuperar senha'),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                hoverColor: Colors.transparent,
+                icon: CircleAvatar(
+                  backgroundColor: Colors.grey.shade100,
+                  radius: 22,
+                  child: Icon(Icons.close, size: 20, color: DefaultColors.text),
+                ),
+              ),
+            ],
+          ),
           backgroundColor: DefaultColors.cardLight,
           shape: RoundedRectangleBorder(borderRadius: DefaultBorders.card),
           content: Column(
@@ -69,12 +83,6 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
             AppButton(
               text: 'Enviar',
               fullWidth: false,

@@ -54,28 +54,13 @@ class _LetterPageState extends State<LetterPage> {
             ),
             const SizedBox(height: 20),
             if (isMobile)
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: createLetter,
-                  icon: const Icon(Icons.edit, color: DefaultColors.primary),
-                  label: const Text(
-                    "Escrever carta",
-                    style: TextStyle(
-                      color: DefaultColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: DefaultColors.primary,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: DefaultBorders.button,
-                    ),
-                  ),
-                ),
+              AppButton(
+                text: 'Escrever carta',
+                onPressed: createLetter,
+                icon: Icons.edit,
+                backgroundColor: Colors.white,
+                textColor: DefaultColors.primary,
+                fontSize: 15,
               ),
           ],
         ),
@@ -177,42 +162,74 @@ class _LetterPageState extends State<LetterPage> {
                 ]
               : null,
         ),
-        child: Row(
-          children: <Widget>[
-            Icon(
-              icon,
-              size: 18,
-              color: active
-                  ? DefaultColors.cardLight
-                  : DefaultColors.textSecondary,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                color: active
-                    ? DefaultColors.cardLight
-                    : DefaultColors.textSecondary,
-                fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+        child: isMobile
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    icon,
+                    size: 18,
+                    color: active
+                        ? DefaultColors.cardLight
+                        : DefaultColors.textSecondary,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: active
+                          ? DefaultColors.cardLight
+                          : DefaultColors.textSecondary,
+                      fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    icon,
+                    size: 18,
+                    color: active
+                        ? DefaultColors.cardLight
+                        : DefaultColors.textSecondary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: active
+                          ? DefaultColors.cardLight
+                          : DefaultColors.textSecondary,
+                      fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
+  }
+
+  Widget responsiveItem(Widget child) {
+    return isMobile ? Expanded(child: child) : child;
   }
 
   Widget filters() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          filterItem("Todas", Icons.mail, 0),
+          responsiveItem(filterItem("Todas", Icons.mail, 0)),
           const SizedBox(width: 8),
-          filterItem("Bloqueadas", Icons.lock, 1),
+          responsiveItem(filterItem("Bloqueadas", Icons.lock, 1)),
           const SizedBox(width: 8),
-          filterItem("Liberadas", Icons.mark_email_read, 2),
+          responsiveItem(filterItem("Liberadas", Icons.mark_email_read, 2)),
         ],
       ),
     );
@@ -357,28 +374,13 @@ class _LetterPageState extends State<LetterPage> {
             ),
           ),
           const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 36,
-            child: ElevatedButton.icon(
-              icon: Icon(isLocked ? Icons.lock : Icons.visibility),
-              onPressed: isLocked ? null : () => openLetter(letter),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isLocked
-                    ? DefaultColors.textSecondary.withValues(alpha: 0.1)
-                    : DefaultColors.primary,
-                foregroundColor: isLocked
-                    ? DefaultColors.textSecondary
-                    : Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: DefaultBorders.button,
-                ),
-              ),
-              label: Text(
-                isLocked ? "Aguarde" : "Abrir carta",
-                style: TextStyle(fontSize: 13),
-              ),
-            ),
+          AppButton(
+            text: isLocked ? "Aguarde" : "Abrir carta",
+            icon: isLocked ? Icons.lock : Icons.visibility,
+            onPressed: () => openLetter(letter),
+            disabled: isLocked,
+            fontSize: 14,
+            height: 40,
           ),
         ],
       ),
@@ -386,7 +388,10 @@ class _LetterPageState extends State<LetterPage> {
   }
 
   Future<void> createLetter() async {
-    final Object? result = await Navigator.pushNamed(context, AppRoutes.newLetter);
+    final Object? result = await Navigator.pushNamed(
+      context,
+      AppRoutes.newLetter,
+    );
     if (result != null) {
       setState(() {
         letters.add(result as Letter);
@@ -404,10 +409,7 @@ class _LetterPageState extends State<LetterPage> {
           Navigator.pushReplacementNamed(
             context,
             AppRoutes.viewLetter,
-            arguments: ViewLetterArgs(
-              letter: letter,
-              allLetters: letters,
-            ),
+            arguments: ViewLetterArgs(letter: letter, allLetters: letters),
           );
         },
       ),

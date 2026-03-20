@@ -11,6 +11,11 @@ class AppButton extends StatefulWidget {
     this.icon,
     this.fullWidth = true,
     this.iconAlignment = IconAlignment.start,
+    this.backgroundColor,
+    this.textColor,
+    this.disabled = false,
+    this.fontSize,
+    this.height,
   });
 
   final String text;
@@ -18,6 +23,11 @@ class AppButton extends StatefulWidget {
   final VoidCallback onPressed;
   final bool fullWidth;
   final IconAlignment iconAlignment;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final bool disabled;
+  final double? fontSize;
+  final double? height;
 
   @override
   State<AppButton> createState() => _AppButtonState();
@@ -26,65 +36,84 @@ class AppButton extends StatefulWidget {
 class _AppButtonState extends State<AppButton> {
   bool _hovered = false;
 
-  final ButtonStyle style = ElevatedButton.styleFrom(
+  ButtonStyle get style => ElevatedButton.styleFrom(
     backgroundColor: Colors.transparent,
     shadowColor: Colors.transparent,
-    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
     shape: RoundedRectangleBorder(borderRadius: DefaultBorders.button),
-  );
-
-  static const TextStyle textStyle = TextStyle(
-    fontSize: 17,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
   );
 
   @override
   Widget build(BuildContext context) {
-    final Text child = Text(widget.text, style: textStyle);
+    final bool isDisabled = widget.disabled;
+
+    final Color textColor =
+        widget.textColor ??
+        (isDisabled ? DefaultColors.textSecondary : Colors.white);
+
+    final Text child = Text(
+      widget.text,
+      style: TextStyle(
+        fontSize: widget.fontSize ?? 17,
+        fontWeight: FontWeight.bold,
+        color: textColor,
+      ),
+    );
 
     return MouseRegion(
       onEnter: (_) {
-        setState(() {
-          _hovered = true;
-        });
+        if (!isDisabled) {
+          setState(() {
+            _hovered = true;
+          });
+        }
       },
       onExit: (_) {
-        setState(() {
-          _hovered = false;
-        });
+        if (!isDisabled) {
+          setState(() {
+            _hovered = false;
+          });
+        }
       },
       child: AnimatedScale(
-        scale: _hovered ? 1.01 : 1.0,
-        duration: Duration(milliseconds: 100),
+        scale: _hovered && !isDisabled ? 1.01 : 1.0,
+        duration: const Duration(milliseconds: 100),
         child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200),
           width: widget.fullWidth ? double.infinity : null,
-          height: widget.fullWidth ? 44 : 38,
+          height: widget.height ?? 43,
           decoration: BoxDecoration(
-            gradient: _hovered
-                ? DefaultColors.colorTeste
-                : DefaultColors.colorTest,
+            color:
+                widget.backgroundColor ??
+                (isDisabled
+                    ? DefaultColors.textSecondary.withValues(alpha: 0.1)
+                    : null),
+            gradient: widget.backgroundColor == null && !isDisabled
+                ? (_hovered
+                      ? DefaultColors.colorTeste
+                      : DefaultColors.colorTest)
+                : null,
             borderRadius: DefaultBorders.button,
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: DefaultColors.text.withValues(alpha: 0.2),
-                blurRadius: 9,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: isDisabled
+                ? <BoxShadow>[]
+                : <BoxShadow>[
+                    BoxShadow(
+                      color: DefaultColors.text.withValues(alpha: 0.2),
+                      blurRadius: 9,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
           ),
           child: widget.icon != null
               ? ElevatedButton.icon(
-                  icon: Icon(widget.icon, color: Colors.white),
+                  icon: Icon(widget.icon, color: textColor),
                   iconAlignment: widget.iconAlignment,
                   label: child,
                   style: style,
-                  onPressed: widget.onPressed,
+                  onPressed: isDisabled ? null : widget.onPressed,
                 )
               : ElevatedButton(
                   style: style,
-                  onPressed: widget.onPressed,
+                  onPressed: isDisabled ? null : widget.onPressed,
                   child: child,
                 ),
         ),

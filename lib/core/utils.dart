@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-const double kMobileWidth = 1000;
+const double kMobileWidth = 700;
 
 class DefaultBorders {
   static const BorderRadius card = BorderRadius.all(Radius.circular(28));
