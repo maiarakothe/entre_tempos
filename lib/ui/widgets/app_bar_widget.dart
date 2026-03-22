@@ -12,20 +12,11 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       title: Row(
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              gradient: DefaultColors.colorTest,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(
-              Icons.mail,
-              size: 18,
-              color: DefaultColors.cardLight,
-            ),
+          Image.asset(
+            'assets/images/logo-sem-fundo.png',
+            width: 150,
+            height: 90,
           ),
-          const SizedBox(width: 8),
-          const Text("EntreTempos"),
         ],
       ),
       actions: <Widget>[
@@ -49,15 +40,18 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                   });
                 },
               ),
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'sair',
-                child: Row(
+                child: const Row(
                   children: <Widget>[
                     Icon(Icons.logout, size: 18),
                     SizedBox(width: 8),
                     Text('Sair'),
                   ],
                 ),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, AppRoutes.login);
+                },
               ),
             ],
           ),

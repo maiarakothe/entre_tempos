@@ -30,25 +30,17 @@ class _SplashPageState extends State<SplashPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(gradient: DefaultColors.colorTest),
-        child: Center(
-          child: FadeTransition(
-            opacity: controller,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: const <Widget>[
-                Icon(Icons.mail_outline, size: 90, color: Colors.white),
-                SizedBox(height: 20),
-                Text(
-                  "EntreTempos",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+      body: Center(
+        child: FadeTransition(
+          opacity: controller,
+          child: Center(
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.9, end: 1.0).animate(controller),
+              child: Image.asset(
+                'assets/images/icone-sem-fundo.png',
+                width: 260,
+                height: 260,
+              ),
             ),
           ),
         ),

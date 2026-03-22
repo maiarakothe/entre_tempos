@@ -23,20 +23,17 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController confirmPasswordController = TextEditingController();
 
   Widget header() {
-    return Column(
-      children: <Widget>[
-        Text(
-          'entreTempos',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 5),
-        Text(
-          'Escreva hoje. Leia amanhã.',
-          style: TextStyle(fontSize: 14, color: DefaultColors.textSecondary),
-        ),
-      ],
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Image.asset(
+            'assets/images/icone-sem-fundo.png',
+            fit: BoxFit.contain,
+            width: 300,
+            height: 120,
+          ),
+        ],
+      ),
     );
   }
 
