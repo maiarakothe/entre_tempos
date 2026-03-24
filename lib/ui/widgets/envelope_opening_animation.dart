@@ -91,23 +91,51 @@ class _EnvelopeOpeningAnimationState extends State<EnvelopeOpeningAnimation>
         child: AnimatedBuilder(
           animation: controller,
           builder: (_, _) {
+            final bool isFlapOpen = flapRotation.value > math.pi / 2;
+
             return SizedBox(
               width: 300,
               height: 400,
               child: Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
-                  Transform.translate(
-                    offset: Offset(0, letterSlide.value),
-                    child: Transform.scale(
-                      scale: letterScale.value,
-                      child: _letter(),
-                    ),
-                  ),
                   Transform.scale(
                     scale: envelopeScale.value,
-                    child: _envelope(),
+                    child: _envelopeBack(),
                   ),
+                  if (isFlapOpen) ...<Widget>[
+                    Transform.scale(
+                      scale: envelopeScale.value,
+                      child: _envelopeFlap(),
+                    ),
+                    Transform.translate(
+                      offset: Offset(0, letterSlide.value),
+                      child: Transform.scale(
+                        scale: letterScale.value,
+                        child: _letter(),
+                      ),
+                    ),
+                    Transform.scale(
+                      scale: envelopeScale.value,
+                      child: _envelopeBody(),
+                    ),
+                  ] else ...<Widget>[
+                    Transform.translate(
+                      offset: Offset(0, letterSlide.value),
+                      child: Transform.scale(
+                        scale: letterScale.value,
+                        child: _letter(),
+                      ),
+                    ),
+                    Transform.scale(
+                      scale: envelopeScale.value,
+                      child: _envelopeBody(),
+                    ),
+                    Transform.scale(
+                      scale: envelopeScale.value,
+                      child: _envelopeFlap(),
+                    ),
+                  ],
                 ],
               ),
             );
@@ -157,27 +185,48 @@ class _EnvelopeOpeningAnimationState extends State<EnvelopeOpeningAnimation>
     );
   }
 
-  Widget _envelope() {
+  Widget _envelopeBack() {
+    return SizedBox(
+      width: 300,
+      height: 200,
+      child: Container(
+        decoration: BoxDecoration(
+          color: DefaultColors.primary.withValues(
+            alpha: 0.2,
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+    );
+  }
+
+  Widget _envelopeBody() {
+    return SizedBox(
+      width: 300,
+      height: 200,
+      child: CustomPaint(
+        painter: EnvelopeBodyPainter(),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: DefaultColors.primary.withValues(alpha: 0.25),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _envelopeFlap() {
     return SizedBox(
       width: 300,
       height: 200,
       child: Stack(
         children: <Widget>[
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: DefaultColors.colorTest,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                    color: DefaultColors.primary.withValues(alpha: 0.25),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-            ),
-          ),
           Positioned(
             top: 0,
             left: 0,
@@ -207,10 +256,20 @@ class FlapPainter extends CustomPainter {
         Rect.fromLTWH(0, 0, size.width, size.height),
       );
 
+    const double radius = 15;
+
     final Path path = Path()
-      ..moveTo(0, 0)
-      ..lineTo(size.width, 0)
-      ..lineTo(size.width / 2, size.height * 0.85)
+      ..moveTo(0, radius)
+      ..quadraticBezierTo(0, 0, radius, 0)
+      ..lineTo(size.width - radius, 0)
+      ..quadraticBezierTo(size.width, 0, size.width, radius)
+      ..lineTo(size.width / 2 + 5, size.height * 0.85 - 3)
+      ..quadraticBezierTo(
+        size.width / 2,
+        size.height * 0.85,
+        size.width / 2 - 5,
+        size.height * 0.85 - 3,
+      )
       ..close();
 
     canvas.drawPath(path, paint);
@@ -221,6 +280,41 @@ class FlapPainter extends CustomPainter {
       ..strokeWidth = 2;
 
     canvas.drawPath(path, highlight);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class EnvelopeBodyPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..shader = DefaultColors.colorTest.createShader(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+      );
+
+    const double radius = 15;
+
+    final Path path = Path()
+      ..moveTo(0, radius)
+      ..lineTo(0, size.height - radius)
+      ..quadraticBezierTo(0, size.height, radius, size.height)
+      ..lineTo(size.width - radius, size.height)
+      ..quadraticBezierTo(
+        size.width,
+        size.height,
+        size.width,
+        size.height - radius,
+      )
+      ..lineTo(size.width, radius)
+      ..quadraticBezierTo(size.width, 0, size.width - radius, 0)
+      ..lineTo(size.width / 2, size.height * 0.4)
+      ..lineTo(radius, 0)
+      ..quadraticBezierTo(0, 0, 0, radius)
+      ..close();
+
+    canvas.drawPath(path, paint);
   }
 
   @override
