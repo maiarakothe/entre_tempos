@@ -20,6 +20,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
   TextEditingController contentController = TextEditingController();
   DateTime? selectedDate;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool isSending = false;
 
   @override
   void dispose() {
@@ -146,13 +147,17 @@ class _NewLetterPageState extends State<NewLetterPage> {
           ),
           const SizedBox(height: 30),
           AppButton(
-            text: 'Enviar Carta',
+            text: isSending ? 'Enviando...' : 'Enviar Carta',
             icon: Icons.send_rounded,
             iconAlignment: IconAlignment.end,
+            disabled: isSending,
             onPressed: () async {
               if (!_formKey.currentState!.validate()) {
                 return;
               }
+              setState(() {
+                isSending = true;
+              });
               if (selectedDate == null) {
                 showSnackBar(
                   context,
@@ -177,6 +182,10 @@ class _NewLetterPageState extends State<NewLetterPage> {
                 Navigator.pop(context);
               } catch (e) {
                 showError(context, 'Erro: $e');
+              } finally {
+                setState(() {
+                  isSending = false;
+                });
               }
             },
           ),

@@ -21,6 +21,7 @@ class _SignupPageState extends State<SignupPage> {
   bool obscureConfirmPassword = true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FocusNode nameFocus = FocusNode();
+  bool isLoading = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -54,6 +55,9 @@ class _SignupPageState extends State<SignupPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    setState(() {
+      isLoading = true;
+    });
     final String name = nameController.text.trim();
     final String email = emailController.text.trim();
     final String password = passwordController.text;
@@ -70,6 +74,10 @@ class _SignupPageState extends State<SignupPage> {
     } catch (e) {
       final String message = getAuthErrorMessage(e);
       showError(context, message);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -175,7 +183,11 @@ class _SignupPageState extends State<SignupPage> {
             ),
           ),
           SizedBox(height: 24),
-          AppButton(text: 'Cadastrar', onPressed: submitForm),
+          AppButton(
+            text: isLoading ? 'Cadastrando...' : 'Cadastrar',
+            disabled: isLoading,
+            onPressed: submitForm,
+          ),
           SizedBox(height: 10),
           SizedBox(height: 5),
           Row(

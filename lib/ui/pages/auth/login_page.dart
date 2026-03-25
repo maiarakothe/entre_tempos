@@ -20,6 +20,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool obscurePassword = true;
   FocusNode emailFocus = FocusNode();
+  bool isLoading = false;
 
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _recoverFormKey = GlobalKey<FormState>();
@@ -130,6 +131,9 @@ class _LoginPageState extends State<LoginPage> {
     if (!_loginFormKey.currentState!.validate()) {
       return;
     }
+    setState(() {
+      isLoading = true;
+    });
     final String email = emailController.text.trim();
     final String password = passwordController.text;
     try {
@@ -144,6 +148,10 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       final String message = getAuthErrorMessage(e);
       showError(context, message);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -199,7 +207,11 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SizedBox(height: 24),
-          AppButton(text: 'Entrar', onPressed: submitForm),
+          AppButton(
+            text: isLoading ? 'Entrando...' : 'Entrar',
+            disabled: isLoading,
+            onPressed: submitForm,
+          ),
           SizedBox(height: 10),
           TextButton(
             child: Text('Esqueci minha senha'),
