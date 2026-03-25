@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "702202650297",
+    "project_id": "entretempos-c93db",
+    "storage_bucket": "entretempos-c93db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702202650297:android:ed50121848f8b4433b4568",
+        "android_client_info": {
+          "package_name": "com.example.entretempos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUlQhqnDNnZ9bpI5bCI-uuOIiW-GWudu8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,10 @@
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
+import 'package:entre_tempos/utils/validators.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../data/services/auth_service.dart';
+import '../../../utils/auth_error_handler.dart';
 import '../routes/routes.dart';
 import '../../../core/default_colors.dart';
 import '../../../core/utils.dart';
@@ -16,6 +20,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool obscurePassword = true;
 
+  final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _recoverFormKey = GlobalKey<FormState>();
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -24,11 +31,11 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         children: <Widget>[
           Image.asset(
-              'assets/images/icone-sem-fundo.png',
-              fit: BoxFit.contain,
-              width: 300,
-              height: 120,
-            ),
+            'assets/images/icone-sem-fundo.png',
+            fit: BoxFit.contain,
+            width: 300,
+            height: 120,
+          ),
         ],
       ),
     );
@@ -38,14 +45,14 @@ class _LoginPageState extends State<LoginPage> {
     final TextEditingController emailController = TextEditingController();
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text('Recuperar senha'),
               IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(dialogContext),
                 hoverColor: Colors.transparent,
                 icon: CircleAvatar(
                   backgroundColor: Colors.grey.shade100,
@@ -57,43 +64,50 @@ class _LoginPageState extends State<LoginPage> {
           ),
           backgroundColor: DefaultColors.cardLight,
           shape: RoundedRectangleBorder(borderRadius: DefaultBorders.card),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Text(
-                'Digite seu e-mail para receber as instruções de recuperação',
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
-                  prefixIcon: Icon(Icons.email_outlined),
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  border: OutlineInputBorder(
-                    borderRadius: DefaultBorders.container,
-                    borderSide: BorderSide.none,
+          content: Form(
+            key: _recoverFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Text(
+                  'Digite seu e-mail para receber as instruções de recuperação',
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: emailController,
+                  validator: Validators.validateEmail,
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    prefixIcon: Icon(Icons.email_outlined),
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: DefaultBorders.container,
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           actions: <Widget>[
             AppButton(
               text: 'Enviar',
               fullWidth: false,
-              onPressed: () {
-                final String email = emailController.text;
-                if (email.isNotEmpty) {
-                  print('Enviar recuperação para: $email');
-
+              onPressed: () async {
+                if (!_recoverFormKey.currentState!.validate()) {
+                  return;
+                }
+                final String email = emailController.text.trim();
+                try {
+                  await AuthService().resetPassword(email);
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Instruções enviadas para seu e-mail'),
-                    ),
+                  showSuccess(
+                    dialogContext,
+                    'Instruções de recuperação enviadas!',
                   );
+                } catch (e) {
+                  showError(dialogContext, 'Erro ao enviar recuperação');
                 }
               },
             ),
@@ -105,12 +119,14 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget content() {
     return Form(
+      key: _loginFormKey,
       child: Column(
         children: <Widget>[
           header(),
           SizedBox(height: 20),
           TextFormField(
             controller: emailController,
+            validator: Validators.validateEmail,
             decoration: InputDecoration(
               labelText: 'Email',
               filled: true,
@@ -126,6 +142,7 @@ class _LoginPageState extends State<LoginPage> {
           TextFormField(
             controller: passwordController,
             obscureText: obscurePassword,
+            validator: Validators.validatePassword,
             decoration: InputDecoration(
               labelText: 'Senha',
               filled: true,
@@ -150,8 +167,25 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(height: 24),
           AppButton(
             text: 'Entrar',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, AppRoutes.home);
+            onPressed: () async {
+              if (!_loginFormKey.currentState!.validate()) {
+                return;
+              }
+              final String email = emailController.text.trim();
+              final String password = passwordController.text;
+              try {
+                final User? user = await AuthService().login(
+                  email: email,
+                  password: password,
+                );
+                if (user != null) {
+                  showSuccess(context, 'Login realizado com sucesso!');
+                  await Navigator.pushReplacementNamed(context, AppRoutes.home);
+                }
+              } catch (e) {
+                final String message = getAuthErrorMessage(e);
+                showError(context, message);
+              }
             },
           ),
           SizedBox(height: 10),
@@ -188,6 +222,13 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override

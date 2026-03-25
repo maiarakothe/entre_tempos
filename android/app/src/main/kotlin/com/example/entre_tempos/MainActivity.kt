@@ -1,4 +1,4 @@
-package com.example.entre_tempos
+package com.example.entretempos
 
 import io.flutter.embedding.android.FlutterActivity
 

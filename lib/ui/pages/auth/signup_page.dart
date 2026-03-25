@@ -1,7 +1,10 @@
+import 'package:entre_tempos/utils/validators.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../data/services/auth_service.dart';
+import '../../../utils/auth_error_handler.dart';
 import '../routes/routes.dart';
-import '../../../core/default_colors.dart';
 import '../../../core/utils.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/page_card_layout.dart';
@@ -16,6 +19,7 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -39,12 +43,14 @@ class _SignupPageState extends State<SignupPage> {
 
   Widget content() {
     return Form(
+      key: _formKey,
       child: Column(
         children: <Widget>[
           header(),
           SizedBox(height: 20),
           TextFormField(
             controller: nameController,
+            validator: Validators.validateName,
             decoration: InputDecoration(
               labelText: 'Nome',
               filled: true,
@@ -59,6 +65,7 @@ class _SignupPageState extends State<SignupPage> {
           SizedBox(height: 14),
           TextFormField(
             controller: emailController,
+            validator: Validators.validateEmail,
             decoration: InputDecoration(
               labelText: 'Email',
               filled: true,
@@ -74,6 +81,7 @@ class _SignupPageState extends State<SignupPage> {
           TextFormField(
             controller: passwordController,
             obscureText: obscurePassword,
+            validator: Validators.validatePassword,
             decoration: InputDecoration(
               labelText: 'Senha',
               filled: true,
@@ -99,6 +107,12 @@ class _SignupPageState extends State<SignupPage> {
           TextFormField(
             controller: confirmPasswordController,
             obscureText: obscureConfirmPassword,
+            validator: (String? value) {
+              return Validators.validateConfirmPassword(
+                value,
+                passwordController.text,
+              );
+            },
             decoration: InputDecoration(
               labelText: 'Confirmar senha',
               prefixIcon: const Icon((Icons.lock_reset_outlined)),
@@ -124,9 +138,31 @@ class _SignupPageState extends State<SignupPage> {
           ),
           SizedBox(height: 24),
           AppButton(
-            text: 'Entrar',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, AppRoutes.home);
+            text: 'Cadastrar',
+            onPressed: () async {
+              if (!_formKey.currentState!.validate()) {
+                return;
+              }
+
+              final String name = nameController.text.trim();
+              final String email = emailController.text.trim();
+              final String password = passwordController.text;
+
+              try {
+                final User? user = await AuthService().register(
+                  name: name,
+                  email: email,
+                  password: password,
+                );
+
+                if (user != null) {
+                  showSuccess(context, 'Conta criada com sucesso!');
+                  await Navigator.pushReplacementNamed(context, AppRoutes.home);
+                }
+              } catch (e) {
+                final String message = getAuthErrorMessage(e);
+                showError(context, message);
+              }
             },
           ),
           SizedBox(height: 10),
@@ -157,6 +193,15 @@ class _SignupPageState extends State<SignupPage> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override
