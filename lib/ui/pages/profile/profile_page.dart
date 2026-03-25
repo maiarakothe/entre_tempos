@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entre_tempos/ui/widgets/app_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/default_colors.dart';
@@ -14,6 +16,39 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+
+  Future<void> loadUserData() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return;
+    }
+    try {
+      final DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (!doc.exists) {
+        return;
+      }
+      setState(() {
+        nameController.text = doc.data()?['name'] ?? '';
+        emailController.text = user.email ?? '';
+      });
+    } catch (e) {
+      print('Erro ao carregar usuário: $e');
+    }
+  }
+
   Widget content() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -48,6 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         const SizedBox(height: 20),
         TextFormField(
+          controller: nameController,
           readOnly: true,
           decoration: InputDecoration(
             labelText: 'Nome completo',
@@ -57,6 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         const SizedBox(height: 20),
         TextFormField(
+          controller: emailController,
           readOnly: true,
           decoration: InputDecoration(
             labelText: 'Email',

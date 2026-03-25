@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entre_tempos/core/default_colors.dart';
 import 'package:entre_tempos/core/utils.dart';
-import 'package:entre_tempos/data/models/letter.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/app_button.dart';
@@ -18,12 +19,30 @@ class _NewLetterPageState extends State<NewLetterPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
   DateTime? selectedDate;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     titleController.dispose();
     contentController.dispose();
     super.dispose();
+  }
+
+  Future<void> saveLetter() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('Usuário não logado');
+    }
+    await FirebaseFirestore.instance
+        .collection('letters')
+        .add(<String, dynamic>{
+          'userId': user.uid,
+          'title': titleController.text.trim(),
+          'content': contentController.text.trim(),
+          'creationDate': Timestamp.now(),
+          'openingDate': Timestamp.fromDate(selectedDate!),
+          'parentId': widget.parentId,
+        });
   }
 
   Widget header() {
@@ -48,6 +67,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
 
   Widget letterForm() {
     return Form(
+      key: _formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -83,13 +103,15 @@ class _NewLetterPageState extends State<NewLetterPage> {
             onTap: () async {
               DateTime? result = await showDatePicker(
                 context: context,
-                currentDate: selectedDate,
+                initialDate: selectedDate ?? DateTime.now(),
                 firstDate: DateTime.now(),
                 lastDate: DateTime(2100, 9, 7, 17, 30),
               );
-              setState(() {
-                selectedDate = result;
-              });
+              if (result != null) {
+                setState(() {
+                  selectedDate = result;
+                });
+              }
             },
             borderRadius: BorderRadius.circular(12),
             child: Container(
@@ -127,30 +149,35 @@ class _NewLetterPageState extends State<NewLetterPage> {
             text: 'Enviar Carta',
             icon: Icons.send_rounded,
             iconAlignment: IconAlignment.end,
-            onPressed: () {
+            onPressed: () async {
+              if (!_formKey.currentState!.validate()) {
+                return;
+              }
               if (selectedDate == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Selecione uma data')),
+                showSnackBar(
+                  context,
+                  message: 'Selecione uma data',
+                  color: DefaultColors.warning,
                 );
                 return;
               }
-              String title = titleController.text;
-              String content = contentController.text;
+              String title = titleController.text.trim();
+              String content = contentController.text.trim();
               if (title.isEmpty || content.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Preencha todos os campos')),
+                showSnackBar(
+                  context,
+                  message: 'Preencha todos os campos',
+                  color: DefaultColors.warning,
                 );
                 return;
               }
-              Letter letter = Letter(
-                id: DateTime.now().microsecondsSinceEpoch.toString(),
-                title: title,
-                content: content,
-                creationDate: DateTime.now(),
-                openingDate: selectedDate!,
-                parentId: widget.parentId,
-              );
-              Navigator.pop(context, letter);
+              try {
+                await saveLetter();
+                showSuccess(context, 'Carta enviada com sucesso');
+                Navigator.pop(context);
+              } catch (e) {
+                showError(context, 'Erro: $e');
+              }
             },
           ),
         ],

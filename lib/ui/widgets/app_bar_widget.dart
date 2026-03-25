@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../pages/routes/routes.dart';
-import '../../core/default_colors.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   const AppBarWidget({super.key});
@@ -49,8 +49,15 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                     Text('Sair'),
                   ],
                 ),
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, AppRoutes.login);
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
+                  if (context.mounted) {
+                    await Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.login,
+                      (Route<dynamic> route) => false,
+                    );
+                  }
                 },
               ),
             ],
