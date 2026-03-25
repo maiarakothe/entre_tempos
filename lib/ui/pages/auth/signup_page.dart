@@ -20,11 +20,20 @@ class _SignupPageState extends State<SignupPage> {
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  FocusNode nameFocus = FocusNode();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Future<Null>.delayed(Duration.zero, () {
+      nameFocus.requestFocus();
+    });
+  }
 
   Widget header() {
     return Center(
@@ -41,6 +50,29 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  void submitForm() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    final String name = nameController.text.trim();
+    final String email = emailController.text.trim();
+    final String password = passwordController.text;
+    try {
+      final User? user = await AuthService().register(
+        name: name,
+        email: email,
+        password: password,
+      );
+      if (user != null) {
+        showSuccess(context, 'Conta criada com sucesso!');
+        await Navigator.pushReplacementNamed(context, AppRoutes.home);
+      }
+    } catch (e) {
+      final String message = getAuthErrorMessage(e);
+      showError(context, message);
+    }
+  }
+
   Widget content() {
     return Form(
       key: _formKey,
@@ -51,6 +83,8 @@ class _SignupPageState extends State<SignupPage> {
           TextFormField(
             controller: nameController,
             validator: Validators.validateName,
+            textInputAction: TextInputAction.next,
+            focusNode: nameFocus,
             decoration: InputDecoration(
               labelText: 'Nome',
               filled: true,
@@ -66,6 +100,7 @@ class _SignupPageState extends State<SignupPage> {
           TextFormField(
             controller: emailController,
             validator: Validators.validateEmail,
+            textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               labelText: 'Email',
               filled: true,
@@ -82,6 +117,7 @@ class _SignupPageState extends State<SignupPage> {
             controller: passwordController,
             obscureText: obscurePassword,
             validator: Validators.validatePassword,
+            textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               labelText: 'Senha',
               filled: true,
@@ -113,6 +149,8 @@ class _SignupPageState extends State<SignupPage> {
                 passwordController.text,
               );
             },
+            textInputAction: TextInputAction.send,
+            onFieldSubmitted: (_) => submitForm(),
             decoration: InputDecoration(
               labelText: 'Confirmar senha',
               prefixIcon: const Icon((Icons.lock_reset_outlined)),
@@ -137,34 +175,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
           ),
           SizedBox(height: 24),
-          AppButton(
-            text: 'Cadastrar',
-            onPressed: () async {
-              if (!_formKey.currentState!.validate()) {
-                return;
-              }
-
-              final String name = nameController.text.trim();
-              final String email = emailController.text.trim();
-              final String password = passwordController.text;
-
-              try {
-                final User? user = await AuthService().register(
-                  name: name,
-                  email: email,
-                  password: password,
-                );
-
-                if (user != null) {
-                  showSuccess(context, 'Conta criada com sucesso!');
-                  await Navigator.pushReplacementNamed(context, AppRoutes.home);
-                }
-              } catch (e) {
-                final String message = getAuthErrorMessage(e);
-                showError(context, message);
-              }
-            },
-          ),
+          AppButton(text: 'Cadastrar', onPressed: submitForm),
           SizedBox(height: 10),
           SizedBox(height: 5),
           Row(
@@ -201,6 +212,7 @@ class _SignupPageState extends State<SignupPage> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    nameFocus.dispose();
     super.dispose();
   }
 

@@ -19,12 +19,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool obscurePassword = true;
+  FocusNode emailFocus = FocusNode();
 
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _recoverFormKey = GlobalKey<FormState>();
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Future<Null>.delayed(Duration.zero, () {
+      emailFocus.requestFocus();
+    });
+  }
 
   Widget header() {
     return Center(
@@ -117,6 +126,27 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void submitForm() async {
+    if (!_loginFormKey.currentState!.validate()) {
+      return;
+    }
+    final String email = emailController.text.trim();
+    final String password = passwordController.text;
+    try {
+      final User? user = await AuthService().login(
+        email: email,
+        password: password,
+      );
+      if (user != null) {
+        showSuccess(context, 'Login realizado com sucesso!');
+        await Navigator.pushReplacementNamed(context, AppRoutes.home);
+      }
+    } catch (e) {
+      final String message = getAuthErrorMessage(e);
+      showError(context, message);
+    }
+  }
+
   Widget content() {
     return Form(
       key: _loginFormKey,
@@ -127,6 +157,8 @@ class _LoginPageState extends State<LoginPage> {
           TextFormField(
             controller: emailController,
             validator: Validators.validateEmail,
+            textInputAction: TextInputAction.next,
+            focusNode: emailFocus,
             decoration: InputDecoration(
               labelText: 'Email',
               filled: true,
@@ -143,6 +175,8 @@ class _LoginPageState extends State<LoginPage> {
             controller: passwordController,
             obscureText: obscurePassword,
             validator: Validators.validatePassword,
+            textInputAction: TextInputAction.send,
+            onFieldSubmitted: (_) => submitForm(),
             decoration: InputDecoration(
               labelText: 'Senha',
               filled: true,
@@ -165,29 +199,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SizedBox(height: 24),
-          AppButton(
-            text: 'Entrar',
-            onPressed: () async {
-              if (!_loginFormKey.currentState!.validate()) {
-                return;
-              }
-              final String email = emailController.text.trim();
-              final String password = passwordController.text;
-              try {
-                final User? user = await AuthService().login(
-                  email: email,
-                  password: password,
-                );
-                if (user != null) {
-                  showSuccess(context, 'Login realizado com sucesso!');
-                  await Navigator.pushReplacementNamed(context, AppRoutes.home);
-                }
-              } catch (e) {
-                final String message = getAuthErrorMessage(e);
-                showError(context, message);
-              }
-            },
-          ),
+          AppButton(text: 'Entrar', onPressed: submitForm),
           SizedBox(height: 10),
           TextButton(
             child: Text('Esqueci minha senha'),
@@ -228,6 +240,7 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    emailFocus.dispose();
     super.dispose();
   }
 
