@@ -43,9 +43,7 @@ class AppRoutes {
 
       case viewLetter:
         final ViewLetterArgs args = settings.arguments as ViewLetterArgs;
-        return _route(
-          ViewLetterPage(letter: args.letter, allLetters: args.allLetters),
-        );
+        return _route(ViewLetterPage(letter: args.letter));
 
       case envelopeAnimation:
         final EnvelopeArgs args = settings.arguments as EnvelopeArgs;
@@ -82,9 +80,8 @@ class AppRoutes {
 
 class ViewLetterArgs {
   final Letter letter;
-  final List<Letter> allLetters;
 
-  ViewLetterArgs({required this.letter, required this.allLetters});
+  ViewLetterArgs({required this.letter});
 }
 
 class EnvelopeArgs {

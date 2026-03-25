@@ -1,4 +1,5 @@
 import 'package:entre_tempos/core/utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../routes/routes.dart';
@@ -6,6 +7,7 @@ import '../../../core/default_colors.dart';
 import '../../../data/models/letter.dart';
 import '../../widgets/app_bar_widget.dart';
 import '../../widgets/app_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LetterPage extends StatefulWidget {
   const LetterPage({super.key});
@@ -15,9 +17,42 @@ class LetterPage extends StatefulWidget {
 }
 
 class _LetterPageState extends State<LetterPage> {
-  List<Letter> letters = <Letter>[];
   int selectedIndex = 0;
   bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
+
+  String getUserName() {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return 'Usuário';
+    }
+    return user.displayName?.split(' ').first ?? 'Usuário';
+  }
+
+  Stream<List<Letter>> getLetters() {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return const Stream<List<Letter>>.empty();
+    }
+    return FirebaseFirestore.instance
+        .collection('letters')
+        .where('userId', isEqualTo: user.uid)
+        .snapshots()
+        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
+          return snapshot.docs.map((
+            QueryDocumentSnapshot<Map<String, dynamic>> doc,
+          ) {
+            final Map<String, dynamic> data = doc.data();
+            return Letter(
+              id: doc.id,
+              title: data['title'],
+              content: data['content'],
+              creationDate: (data['creationDate'] as Timestamp).toDate(),
+              openingDate: (data['openingDate'] as Timestamp).toDate(),
+              parentId: data['parentId'],
+            );
+          }).toList();
+        });
+  }
 
   Widget slogan() {
     return Padding(
@@ -38,8 +73,8 @@ class _LetterPageState extends State<LetterPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text(
-              "Olá, Fulano👋",
+            Text(
+              "Olá, ${getUserName()} 👋",
               style: TextStyle(color: DefaultColors.cardLight, fontSize: 16),
             ),
             const SizedBox(height: 8),
@@ -99,14 +134,13 @@ class _LetterPageState extends State<LetterPage> {
     );
   }
 
-  Widget textCount() {
-    int num = filteredLetters.length;
+  Widget textCount(int count) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
         padding: const EdgeInsets.only(left: 20),
         child: Text(
-          num == 1 ? '$num carta' : '$num cartas',
+          '$count ${count == 1 ? 'carta' : 'cartas'}',
           style: TextStyle(
             fontSize: 15,
             color: DefaultColors.textSecondary,
@@ -117,7 +151,7 @@ class _LetterPageState extends State<LetterPage> {
     );
   }
 
-  List<Letter> get filteredLetters {
+  List<Letter> getFilteredLetters(List<Letter> letters) {
     if (selectedIndex == 0) {
       return letters;
     }
@@ -358,13 +392,11 @@ class _LetterPageState extends State<LetterPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            isLocked ? "Disponível em:" : "Aberta em:",
+            isLocked ? "Disponível em:" : "Liberada em:",
             style: TextStyle(color: DefaultColors.textSecondary, fontSize: 11),
           ),
           Text(
-            isLocked
-                ? formatDate(letter.openingDate)
-                : formatDate(letter.creationDate),
+            formatDate(letter.openingDate),
             style: TextStyle(
               color: isLocked
                   ? DefaultColors.textSecondary
@@ -388,19 +420,11 @@ class _LetterPageState extends State<LetterPage> {
   }
 
   Future<void> createLetter() async {
-    final Object? result = await Navigator.pushNamed(
-      context,
-      AppRoutes.newLetter,
-    );
-    if (result != null) {
-      setState(() {
-        letters.add(result as Letter);
-      });
-    }
+    await Navigator.pushNamed(context, AppRoutes.newLetter);
   }
 
   void openLetter(Letter letter) async {
-    final dynamic result = await Navigator.pushNamed(
+    await Navigator.pushNamed(
       context,
       AppRoutes.envelopeAnimation,
       arguments: EnvelopeArgs(
@@ -409,54 +433,60 @@ class _LetterPageState extends State<LetterPage> {
           Navigator.pushReplacementNamed(
             context,
             AppRoutes.viewLetter,
-            arguments: ViewLetterArgs(letter: letter, allLetters: letters),
+            arguments: ViewLetterArgs(letter: letter),
           );
         },
       ),
     );
-    if (result != null && result is Letter) {
-      setState(() {
-        letters.add(result);
-      });
-    } else {
-      setState(() {});
-    }
   }
 
   Widget content() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          slogan(),
-          newLetter(),
-          const SizedBox(height: 5),
-          textCount(),
-          const SizedBox(height: 10),
-          filters(),
-          const SizedBox(height: 20),
-          if (letters.isEmpty)
-            emptyState()
-          else if (filteredLetters.isEmpty)
-            emptyFilteredState()
-          else
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: filteredLetters.length,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 500,
-                  mainAxisExtent: 240,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
+    return StreamBuilder<List<Letter>>(
+      stream: getLetters(),
+      builder: (BuildContext context, AsyncSnapshot<List<Letter>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final List<Letter> letters = snapshot.data ?? <Letter>[];
+        final List<Letter> filtered = getFilteredLetters(letters);
+
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              slogan(),
+              newLetter(),
+              const SizedBox(height: 5),
+              textCount(filtered.length),
+              const SizedBox(height: 10),
+              filters(),
+              const SizedBox(height: 20),
+              if (letters.isEmpty)
+                emptyState()
+              else if (filtered.isEmpty)
+                emptyFilteredState()
+              else
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: filtered.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 500,
+                          mainAxisExtent: 240,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                    itemBuilder: (_, int i) => letterCard(filtered[i]),
+                  ),
                 ),
-                itemBuilder: (_, int i) => letterCard(filteredLetters[i]),
-              ),
-            ),
-        ],
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 

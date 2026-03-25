@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entre_tempos/core/default_colors.dart';
 import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/ui/widgets/app_button.dart';
@@ -8,14 +9,9 @@ import '../routes/routes.dart';
 import '../../../data/models/letter.dart';
 
 class ViewLetterPage extends StatefulWidget {
-  const ViewLetterPage({
-    super.key,
-    required this.letter,
-    required this.allLetters,
-  });
+  const ViewLetterPage({super.key, required this.letter});
 
   final Letter letter;
-  final List<Letter> allLetters;
 
   @override
   State<ViewLetterPage> createState() => _ViewLetterPageState();
@@ -23,6 +19,7 @@ class ViewLetterPage extends StatefulWidget {
 
 class _ViewLetterPageState extends State<ViewLetterPage> {
   Letter? originalLetter;
+  bool isLoadingParent = false;
 
   @override
   void initState() {
@@ -30,16 +27,38 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
     _findOriginalLetter();
   }
 
-  void _findOriginalLetter() {
-    if (widget.letter.parentId != null) {
-      try {
-        originalLetter = widget.allLetters.firstWhere(
-          (Letter l) => l.id == widget.letter.parentId,
-        );
-      } catch (e) {
-        print('Carta pai não encontrada');
-      }
+  Future<void> _findOriginalLetter() async {
+    if (widget.letter.parentId == null) {
+      return;
     }
+    setState(() {
+      isLoadingParent = true;
+    });
+    try {
+      final DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+          .instance
+          .collection('letters')
+          .doc(widget.letter.parentId)
+          .get();
+      if (doc.exists) {
+        final Map<String, dynamic> data = doc.data()!;
+        setState(() {
+          originalLetter = Letter(
+            id: doc.id,
+            title: data['title'],
+            content: data['content'],
+            creationDate: (data['creationDate'] as Timestamp).toDate(),
+            openingDate: (data['openingDate'] as Timestamp).toDate(),
+            parentId: data['parentId'],
+          );
+        });
+      }
+    } catch (e) {
+      showError(context, 'Erro ao buscar carta pai: $e');
+    }
+    setState(() {
+      isLoadingParent = false;
+    });
   }
 
   bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
@@ -55,10 +74,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
                 Navigator.pushNamed(
                   context,
                   AppRoutes.viewLetter,
-                  arguments: ViewLetterArgs(
-                    letter: originalLetter!,
-                    allLetters: widget.allLetters,
-                  ),
+                  arguments: ViewLetterArgs(letter: originalLetter!),
                 );
               },
               child: Row(
@@ -113,7 +129,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
         ),
         SizedBox(width: 4),
         Text(
-          'Aberta em ${formatDate(widget.letter.openingDate)}',
+          'Liberada em ${formatDate(widget.letter.openingDate)}',
           style: TextStyle(color: DefaultColors.textSecondary, fontSize: 14),
           textAlign: TextAlign.center,
         ),
