@@ -5,6 +5,7 @@ import 'package:entre_tempos/ui/widgets/app_button.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
+import '../../../data/services/letter_service.dart';
 import '../routes/routes.dart';
 import '../../../data/models/letter.dart';
 
@@ -20,6 +21,9 @@ class ViewLetterPage extends StatefulWidget {
 class _ViewLetterPageState extends State<ViewLetterPage> {
   Letter? originalLetter;
   bool isLoadingParent = false;
+  final LetterService _letterService = LetterService();
+
+  bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
 
   @override
   void initState() {
@@ -35,33 +39,22 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
       isLoadingParent = true;
     });
     try {
-      final DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
-          .instance
-          .collection('letters')
-          .doc(widget.letter.parentId)
-          .get();
-      if (doc.exists) {
-        final Map<String, dynamic> data = doc.data()!;
+      final Letter? letter = await _letterService.getLetterById(
+        widget.letter.parentId!,
+      );
+      if (letter != null) {
         setState(() {
-          originalLetter = Letter(
-            id: doc.id,
-            title: data['title'],
-            content: data['content'],
-            creationDate: (data['creationDate'] as Timestamp).toDate(),
-            openingDate: (data['openingDate'] as Timestamp).toDate(),
-            parentId: data['parentId'],
-          );
+          originalLetter = letter;
         });
       }
     } catch (e) {
-      showError(context, 'Erro ao buscar carta pai: $e');
+      showError(context, 'Erro ao buscar carta pai');
+    } finally {
+      setState(() {
+        isLoadingParent = false;
+      });
     }
-    setState(() {
-      isLoadingParent = false;
-    });
   }
-
-  bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
 
   Widget headerSection() {
     return Column(

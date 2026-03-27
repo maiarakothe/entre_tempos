@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entre_tempos/data/models/user.dart';
 import 'package:entre_tempos/ui/widgets/app_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/default_colors.dart';
 import '../../../core/utils.dart';
+import '../../../data/services/user_service.dart';
 import '../../widgets/app_bar_widget.dart';
 import '../../widgets/page_card_layout.dart';
 
@@ -16,6 +16,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool isEditing = false;
+  bool isLoading = false;
+
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
@@ -26,26 +29,38 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> loadUserData() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return;
-    }
+    setState(() {
+      isLoading = true;
+    });
     try {
-      final DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (!doc.exists) {
-        return;
-      }
-      setState(() {
-        nameController.text = doc.data()?['name'] ?? '';
-        emailController.text = user.email ?? '';
-      });
+      final AppUser user = await UserService().getUserData();
+      nameController.text = user.name;
+      emailController.text = user.email;
     } catch (e) {
-      print('Erro ao carregar usuário: $e');
+      showError(context, 'Erro ao carregar usuário');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> saveUserData() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await UserService().updateUserName(nameController.text);
+      setState(() {
+        isEditing = false;
+      });
+      showSuccess(context, 'Nome atualizado com sucesso!');
+    } catch (e) {
+      showError(context, 'Erro ao atualizar nome');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -84,7 +99,8 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 20),
         TextFormField(
           controller: nameController,
-          readOnly: true,
+          readOnly: !isEditing,
+          enabled: isEditing,
           decoration: InputDecoration(
             labelText: 'Nome completo',
             floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -95,6 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
         TextFormField(
           controller: emailController,
           readOnly: true,
+          enabled: false,
           decoration: InputDecoration(
             labelText: 'Email',
             floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -102,21 +119,54 @@ class _ProfilePageState extends State<ProfilePage> {
             border: OutlineInputBorder(borderRadius: DefaultBorders.container),
           ),
         ),
+        Text(
+          'O email não pode ser alterado',
+          style: TextStyle(fontSize: 12, color: DefaultColors.textSecondary),
+        ),
         const SizedBox(height: 20),
-        Container(
-          decoration: BoxDecoration(
-            gradient: DefaultColors.colorTest,
-            borderRadius: DefaultBorders.button,
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: DefaultColors.primary.withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+        buttons(),
+      ],
+    );
+  }
+
+  Widget buttons() {
+    return Column(
+      children: <Widget>[
+        if (isEditing) ...<Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              AppButton(
+                text: 'Cancelar',
+                fullWidth: false,
+                backgroundColor: DefaultColors.error,
+                onPressed: () async {
+                  setState(() {
+                    isEditing = false;
+                  });
+
+                  await loadUserData();
+                },
+              ),
+              const SizedBox(width: 10),
+              AppButton(
+                text: isLoading ? 'Salvando...' : 'Salvar',
+                fullWidth: false,
+                disabled: isLoading,
+                onPressed: saveUserData,
               ),
             ],
           ),
-          child: AppButton(text: 'Editar Perfil', onPressed: () {}),
-        ),
+        ],
+        if (!isEditing)
+          AppButton(
+            text: 'Editar Nome',
+            onPressed: () {
+              setState(() {
+                isEditing = true;
+              });
+            },
+          ),
       ],
     );
   }

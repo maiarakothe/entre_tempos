@@ -2,12 +2,12 @@ import 'package:entre_tempos/core/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../data/services/letter_service.dart';
 import '../routes/routes.dart';
 import '../../../core/default_colors.dart';
 import '../../../data/models/letter.dart';
 import '../../widgets/app_bar_widget.dart';
 import '../../widgets/app_button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LetterPage extends StatefulWidget {
   const LetterPage({super.key});
@@ -20,38 +20,14 @@ class _LetterPageState extends State<LetterPage> {
   int selectedIndex = 0;
   bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
 
+  final LetterService _letterService = LetterService();
+
   String getUserName() {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return 'Usuário';
     }
     return user.displayName?.split(' ').first ?? 'Usuário';
-  }
-
-  Stream<List<Letter>> getLetters() {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return const Stream<List<Letter>>.empty();
-    }
-    return FirebaseFirestore.instance
-        .collection('letters')
-        .where('userId', isEqualTo: user.uid)
-        .snapshots()
-        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
-          return snapshot.docs.map((
-            QueryDocumentSnapshot<Map<String, dynamic>> doc,
-          ) {
-            final Map<String, dynamic> data = doc.data();
-            return Letter(
-              id: doc.id,
-              title: data['title'],
-              content: data['content'],
-              creationDate: (data['creationDate'] as Timestamp).toDate(),
-              openingDate: (data['openingDate'] as Timestamp).toDate(),
-              parentId: data['parentId'],
-            );
-          }).toList();
-        });
   }
 
   Widget slogan() {
@@ -442,7 +418,7 @@ class _LetterPageState extends State<LetterPage> {
 
   Widget content() {
     return StreamBuilder<List<Letter>>(
-      stream: getLetters(),
+      stream: _letterService.getLetters(),
       builder: (BuildContext context, AsyncSnapshot<List<Letter>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

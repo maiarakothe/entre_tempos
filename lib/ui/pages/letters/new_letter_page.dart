@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entre_tempos/core/default_colors.dart';
 import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../data/models/letter.dart';
+import '../../../data/services/letter_service.dart';
 import '../../widgets/app_button.dart';
 
 class NewLetterPage extends StatefulWidget {
@@ -29,21 +30,56 @@ class _NewLetterPageState extends State<NewLetterPage> {
     super.dispose();
   }
 
-  Future<void> saveLetter() async {
+  Future<void> formSubmit() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    if (selectedDate == null) {
+      showSnackBar(
+        context,
+        message: 'Selecione uma data',
+        color: DefaultColors.warning,
+      );
+      return;
+    }
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      throw Exception('Usuário não logado');
+      showError(context, 'Usuário não autenticado');
+      return;
     }
-    await FirebaseFirestore.instance
-        .collection('letters')
-        .add(<String, dynamic>{
-          'userId': user.uid,
-          'title': titleController.text.trim(),
-          'content': contentController.text.trim(),
-          'creationDate': Timestamp.now(),
-          'openingDate': Timestamp.fromDate(selectedDate!),
-          'parentId': widget.parentId,
-        });
+    String title = titleController.text.trim();
+    String content = contentController.text.trim();
+    if (title.isEmpty || content.isEmpty) {
+      showSnackBar(
+        context,
+        message: 'Preencha todos os campos',
+        color: DefaultColors.warning,
+      );
+      return;
+    }
+    setState(() {
+      isSending = true;
+    });
+    try {
+      final Letter letter = Letter(
+        id: '',
+        title: title,
+        content: content,
+        creationDate: DateTime.now(),
+        openingDate: selectedDate!,
+        parentId: widget.parentId,
+        userId: user.uid,
+      );
+      await LetterService().createLetter(letter);
+      showSuccess(context, 'Carta enviada com sucesso');
+      Navigator.pop(context);
+    } catch (e) {
+      showError(context, 'Erro ao enviar carta');
+    } finally {
+      setState(() {
+        isSending = false;
+      });
+    }
   }
 
   Widget header() {
@@ -151,43 +187,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
             icon: Icons.send_rounded,
             iconAlignment: IconAlignment.end,
             disabled: isSending,
-            onPressed: () async {
-              if (!_formKey.currentState!.validate()) {
-                return;
-              }
-              setState(() {
-                isSending = true;
-              });
-              if (selectedDate == null) {
-                showSnackBar(
-                  context,
-                  message: 'Selecione uma data',
-                  color: DefaultColors.warning,
-                );
-                return;
-              }
-              String title = titleController.text.trim();
-              String content = contentController.text.trim();
-              if (title.isEmpty || content.isEmpty) {
-                showSnackBar(
-                  context,
-                  message: 'Preencha todos os campos',
-                  color: DefaultColors.warning,
-                );
-                return;
-              }
-              try {
-                await saveLetter();
-                showSuccess(context, 'Carta enviada com sucesso');
-                Navigator.pop(context);
-              } catch (e) {
-                showError(context, 'Erro: $e');
-              } finally {
-                setState(() {
-                  isSending = false;
-                });
-              }
-            },
+            onPressed: formSubmit,
           ),
         ],
       ),
