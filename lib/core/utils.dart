@@ -16,6 +16,36 @@ String formatDate(DateTime d) {
       '${d.year}';
 }
 
+String getGreeting() {
+  final int hour = DateTime.now().hour;
+  if (hour < 12) {
+    return 'Bom dia';
+  } else if (hour < 18) {
+    return 'Boa tarde';
+  } else {
+    return 'Boa noite';
+  }
+}
+
+String getCountdownText(DateTime openDate) {
+  final DateTime now = DateTime.now();
+  final Duration diff = openDate.difference(now);
+  if (diff.isNegative) {
+    return "Abrir carta";
+  }
+  final int days = diff.inDays;
+  final int hours = diff.inHours % 24;
+  final int minutes = diff.inMinutes % 60;
+  final int seconds = diff.inSeconds % 60;
+  if (days > 0) {
+    return "${days}d ${hours}h ${minutes}m ${seconds}s";
+  } else if (hours > 0) {
+    return "${hours}h ${minutes}m ${seconds}s";
+  } else {
+    return "${minutes}m ${seconds}s";
+  }
+}
+
 void showSnackBar(
   BuildContext context, {
   required String message,

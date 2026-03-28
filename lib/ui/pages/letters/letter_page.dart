@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:entre_tempos/core/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import '../../../core/default_colors.dart';
 import '../../../data/models/letter.dart';
 import '../../widgets/app_bar_widget.dart';
 import '../../widgets/app_button.dart';
+import '../../widgets/letter_card_widget.dart';
 
 class LetterPage extends StatefulWidget {
   const LetterPage({super.key});
@@ -50,7 +53,7 @@ class _LetterPageState extends State<LetterPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              "Olá, ${getUserName()} 👋",
+              "${getGreeting()}, ${getUserName()} 👋",
               style: TextStyle(color: DefaultColors.cardLight, fontSize: 16),
             ),
             const SizedBox(height: 8),
@@ -237,7 +240,7 @@ class _LetterPageState extends State<LetterPage> {
         children: <Widget>[
           responsiveItem(filterItem("Todas", Icons.mail, 0)),
           const SizedBox(width: 8),
-          responsiveItem(filterItem("Bloqueadas", Icons.lock, 1)),
+          responsiveItem(filterItem("Bloqueadas", Icons.lock_clock_rounded, 1)),
           const SizedBox(width: 8),
           responsiveItem(filterItem("Liberadas", Icons.mark_email_read, 2)),
         ],
@@ -286,111 +289,6 @@ class _LetterPageState extends State<LetterPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget letterCard(Letter letter) {
-    final bool isLocked = DateTime.now().isBefore(letter.openingDate);
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: DefaultBorders.card,
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            blurRadius: 20,
-            color: DefaultColors.textSecondary.withValues(alpha: 0.1),
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isLocked
-                      ? DefaultColors.error.withValues(alpha: 0.1)
-                      : DefaultColors.success.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  isLocked ? Icons.lock : Icons.mark_email_read,
-                  color: isLocked ? DefaultColors.error : DefaultColors.success,
-                  size: 18,
-                ),
-              ),
-              if (letter.parentId != null)
-                Container(
-                  margin: const EdgeInsets.only(bottom: 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.reply,
-                        size: 10,
-                        color: DefaultColors.textSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      const Text(
-                        'RESPOSTA',
-                        style: TextStyle(
-                          color: DefaultColors.textSecondary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: Text(
-              letter.title,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: DefaultColors.text,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            isLocked ? "Disponível em:" : "Liberada em:",
-            style: TextStyle(color: DefaultColors.textSecondary, fontSize: 11),
-          ),
-          Text(
-            formatDate(letter.openingDate),
-            style: TextStyle(
-              color: isLocked
-                  ? DefaultColors.textSecondary
-                  : DefaultColors.primary,
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-            ),
-          ),
-          const SizedBox(height: 12),
-          AppButton(
-            text: isLocked ? "Aguarde" : "Abrir carta",
-            icon: isLocked ? Icons.lock : Icons.visibility,
-            onPressed: () => openLetter(letter),
-            disabled: isLocked,
-            fontSize: 14,
-            height: 40,
-          ),
-        ],
       ),
     );
   }
@@ -456,7 +354,11 @@ class _LetterPageState extends State<LetterPage> {
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
                         ),
-                    itemBuilder: (_, int i) => letterCard(filtered[i]),
+                    itemBuilder: (_, int i) => LetterCardWidget(
+                      key: ValueKey<String>(filtered[i].id),
+                      letter: filtered[i],
+                      onOpen: () => openLetter(filtered[i]),
+                    ),
                   ),
                 ),
             ],
