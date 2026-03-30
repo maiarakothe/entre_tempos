@@ -10,6 +10,7 @@ class Letter {
   DateTime openingDate;
   String? parentId;
   String userId;
+  List<String> imageUrls;
 
   Letter({
     required this.id,
@@ -19,6 +20,7 @@ class Letter {
     required this.openingDate,
     required this.userId,
     this.parentId,
+    this.imageUrls = const <String>[]
   });
 
   Map<String, dynamic> toMap() {
@@ -29,6 +31,7 @@ class Letter {
       'creationDate': Timestamp.fromDate(creationDate),
       'openingDate': Timestamp.fromDate(openingDate),
       'parentId': parentId,
+      'imageUrls': imageUrls,
     };
   }
 
@@ -41,6 +44,7 @@ class Letter {
       openingDate: (data['openingDate'] as Timestamp).toDate(),
       parentId: data['parentId'],
       userId: data['userId'],
+      imageUrls: List<String>.from(data['imageUrls'] ?? <dynamic>[]),
     );
   }
 }

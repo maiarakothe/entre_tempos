@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entre_tempos/core/default_colors.dart';
 import 'package:entre_tempos/core/utils.dart';
@@ -6,6 +8,7 @@ import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/services/letter_service.dart';
+import '../../widgets/image_card.dart';
 import '../routes/routes.dart';
 import '../../../data/models/letter.dart';
 
@@ -176,10 +179,28 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
             widget.letter.content,
             style: const TextStyle(fontSize: 16, height: 1.5),
           ),
+          if (widget.letter.imageUrls.isNotEmpty) const SizedBox(height: 10),
+          imagesSection(),
           const SizedBox(height: 32),
           replyButton(),
         ],
       ),
+    );
+  }
+
+  Widget imagesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Divider(color: DefaultColors.textSecondary.withValues(alpha: 0.1)),
+        const SizedBox(height: 20),
+        Text(
+          'Memórias anexadas',
+          style: TextStyle(fontSize: 14, color: DefaultColors.textSecondary),
+        ),
+        const SizedBox(height: 10),
+        ImageCard(images: widget.letter.imageUrls.map(base64Decode).toList()),
+      ],
     );
   }
 
