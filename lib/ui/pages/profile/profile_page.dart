@@ -174,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       appBar: AppBarWidget(),
       body: PageCardLayout(child: content()),
     );
