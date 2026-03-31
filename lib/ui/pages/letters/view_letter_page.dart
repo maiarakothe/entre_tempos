@@ -145,16 +145,16 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
               },
               child: Row(
                 children: <Widget>[
-                  const Icon(
+                  Icon(
                     Icons.reply,
                     size: 16,
-                    color: DefaultColors.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Resposta para: ${originalLetter!.title}',
-                    style: const TextStyle(
-                      color: DefaultColors.primary,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -178,25 +178,25 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
       children: <Widget>[
         Icon(
           Icons.calendar_today_outlined,
-          color: DefaultColors.textSecondary,
+          color: Theme.of(context).hintColor,
           size: 16,
         ),
         SizedBox(width: 4),
         Text(
           'Escrita em ${formatDate(widget.letter.creationDate)}',
-          style: TextStyle(color: DefaultColors.textSecondary, fontSize: 14),
+          style: TextStyle(color: Theme.of(context).hintColor, fontSize: 14),
           textAlign: TextAlign.center,
         ),
         Spacer(),
         Icon(
           Icons.access_time_rounded,
-          color: DefaultColors.textSecondary,
+          color: Theme.of(context).hintColor,
           size: 16,
         ),
         SizedBox(width: 4),
         Text(
           'Liberada em ${formatDate(widget.letter.openingDate)}',
-          style: TextStyle(color: DefaultColors.textSecondary, fontSize: 14),
+          style: TextStyle(color: Theme.of(context).hintColor, fontSize: 14),
           textAlign: TextAlign.center,
         ),
       ],
@@ -243,7 +243,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
           const SizedBox(height: 20),
           dateSection(),
           const SizedBox(height: 20),
-          Divider(color: DefaultColors.textSecondary.withValues(alpha: 0.1)),
+          Divider(color: Theme.of(context).dividerColor),
           const SizedBox(height: 10),
           Text(
             widget.letter.content,
@@ -252,13 +252,13 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
           if (widget.letter.audioUrl != null ||
               widget.letter.imageUrls.isNotEmpty) ...<Widget>[
             const SizedBox(height: 10),
-            Divider(color: DefaultColors.textSecondary.withValues(alpha: 0.1)),
+            Divider(color: Theme.of(context).dividerColor),
             const SizedBox(height: 20),
             Text(
               'Memórias anexadas',
               style: TextStyle(
                 fontSize: 14,
-                color: DefaultColors.textSecondary,
+                color: Theme.of(context).hintColor,
               ),
             ),
             imagesSection(),
@@ -279,8 +279,11 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
-            color: DefaultColors.primary.withValues(alpha: 0.08),
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.09),
             borderRadius: DefaultBorders.container,
+            border: Border.all(color: Theme.of(context).colorScheme.primary),
           ),
           child: Row(
             children: <Widget>[
@@ -290,7 +293,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
                   isPlaying
                       ? Icons.pause_circle_filled
                       : Icons.play_circle_fill,
-                  color: DefaultColors.primary,
+                  color: Theme.of(context).colorScheme.primary,
                   size: 40,
                 ),
               ),
@@ -298,10 +301,10 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
                 child: Column(
                   children: <Widget>[
                     Slider(
-                      activeColor: DefaultColors.primary,
-                      inactiveColor: DefaultColors.primary.withValues(
-                        alpha: 0.2,
-                      ),
+                      activeColor: Theme.of(context).colorScheme.primary,
+                      inactiveColor: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.2),
                       min: 0,
                       max: _duration.inMilliseconds.toDouble() > 0
                           ? _duration.inMilliseconds.toDouble()
@@ -357,7 +360,10 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: DefaultColors.text),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).appBarTheme.foregroundColor,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),

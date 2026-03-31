@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/theme_notifier.dart';
 import '../pages/routes/routes.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
@@ -20,10 +21,25 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: <Widget>[
+        ValueListenableBuilder<ThemeMode>(
+          valueListenable: themeNotifier,
+          builder: (BuildContext context, ThemeMode mode, Widget? child) {
+            return IconButton(
+              icon: Icon(
+                mode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
+              ),
+              onPressed: () {
+                themeNotifier.value = mode == ThemeMode.dark
+                    ? ThemeMode.light
+                    : ThemeMode.dark;
+              },
+            );
+          },
+        ),
         Padding(
           padding: const EdgeInsets.only(right: 20),
           child: PopupMenuButton<String>(
-            icon: const Icon(Icons.person_outline),
+            icon: const Icon(Icons.person_rounded),
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: 'perfil',

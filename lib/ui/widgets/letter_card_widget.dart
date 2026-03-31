@@ -47,9 +47,11 @@ class _LetterCardWidgetState extends State<LetterCardWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isLocked ? Colors.white70 : DefaultColors.cardLight,
+        color: isLocked
+            ? Theme.of(context).canvasColor
+            : Theme.of(context).cardColor,
         borderRadius: DefaultBorders.card,
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: <BoxShadow>[
           BoxShadow(
             blurRadius: 20,
@@ -85,13 +87,13 @@ class _LetterCardWidgetState extends State<LetterCardWidget> {
                     Icon(
                       Icons.reply,
                       size: 10,
-                      color: DefaultColors.textSecondary,
+                      color: Theme.of(context).hintColor,
                     ),
                     const SizedBox(width: 4),
-                    const Text(
+                    Text(
                       'RESPOSTA',
                       style: TextStyle(
-                        color: DefaultColors.textSecondary,
+                        color: Theme.of(context).hintColor,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
@@ -106,24 +108,20 @@ class _LetterCardWidgetState extends State<LetterCardWidget> {
               widget.letter.title,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: DefaultColors.text,
-              ),
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             isLocked ? "Disponível em:" : "Liberada em:",
-            style: TextStyle(color: DefaultColors.textSecondary, fontSize: 11),
+            style: TextStyle(color: Theme.of(context).hintColor, fontSize: 11),
           ),
           Text(
             formatDate(widget.letter.openingDate),
             style: TextStyle(
               color: isLocked
-                  ? DefaultColors.textSecondary
-                  : DefaultColors.primary,
+                  ? Theme.of(context).hintColor
+                  : Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
               fontSize: 13,
             ),

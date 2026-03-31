@@ -86,7 +86,6 @@ class _EnvelopeOpeningAnimationState extends State<EnvelopeOpeningAnimation>
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: DefaultColors.pageColor,
       child: Center(
         child: AnimatedBuilder(
           animation: controller,

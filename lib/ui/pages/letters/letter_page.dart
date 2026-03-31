@@ -91,11 +91,7 @@ class _LetterPageState extends State<LetterPage> {
             children: <Widget>[
               Text(
                 'Minhas Cartas',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                  color: DefaultColors.text,
-                ),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
               ),
               Spacer(),
               if (!isMobile) ...<Widget>[
@@ -122,7 +118,7 @@ class _LetterPageState extends State<LetterPage> {
           '$count ${count == 1 ? 'carta' : 'cartas'}',
           style: TextStyle(
             fontSize: 15,
-            color: DefaultColors.textSecondary,
+            color: Theme.of(context).hintColor,
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -162,9 +158,11 @@ class _LetterPageState extends State<LetterPage> {
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
           gradient: active ? DefaultColors.colorTest : null,
-          color: active ? null : DefaultColors.cardLight,
+          color: active ? null : Theme.of(context).cardColor,
           borderRadius: DefaultBorders.button,
-          border: active ? null : Border.all(color: Colors.grey.shade200),
+          border: active
+              ? null
+              : Border.all(color: Theme.of(context).dividerColor),
           boxShadow: active
               ? <BoxShadow>[
                   BoxShadow(
@@ -185,7 +183,7 @@ class _LetterPageState extends State<LetterPage> {
                     size: 18,
                     color: active
                         ? DefaultColors.cardLight
-                        : DefaultColors.textSecondary,
+                        : Theme.of(context).hintColor,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -196,7 +194,7 @@ class _LetterPageState extends State<LetterPage> {
                       fontSize: 12,
                       color: active
                           ? DefaultColors.cardLight
-                          : DefaultColors.textSecondary,
+                          : Theme.of(context).hintColor,
                       fontWeight: active ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
@@ -210,7 +208,7 @@ class _LetterPageState extends State<LetterPage> {
                     size: 18,
                     color: active
                         ? DefaultColors.cardLight
-                        : DefaultColors.textSecondary,
+                        : Theme.of(context).hintColor,
                   ),
                   const SizedBox(width: 6),
                   Text(
@@ -219,7 +217,7 @@ class _LetterPageState extends State<LetterPage> {
                     style: TextStyle(
                       color: active
                           ? DefaultColors.cardLight
-                          : DefaultColors.textSecondary,
+                          : Theme.of(context).hintColor,
                       fontWeight: active ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
@@ -370,10 +368,6 @@ class _LetterPageState extends State<LetterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: DefaultColors.pageColor,
-      appBar: AppBarWidget(),
-      body: content(),
-    );
+    return Scaffold(appBar: AppBarWidget(), body: content());
   }
 }

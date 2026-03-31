@@ -56,72 +56,78 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text('Recuperar senha'),
-              IconButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                hoverColor: Colors.transparent,
-                icon: CircleAvatar(
-                  backgroundColor: Colors.grey.shade100,
-                  radius: 22,
-                  child: Icon(Icons.close, size: 20, color: DefaultColors.text),
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: DefaultColors.cardLight,
-          shape: RoundedRectangleBorder(borderRadius: DefaultBorders.card),
-          content: Form(
-            key: _recoverFormKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+        return Theme(
+          data: themeLightData(),
+          child: AlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                const Text(
-                  'Digite seu e-mail para receber as instruções de recuperação',
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: emailController,
-                  validator: Validators.validateEmail,
-                  decoration: InputDecoration(
-                    labelText: 'E-mail',
-                    prefixIcon: Icon(Icons.email_outlined),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    border: OutlineInputBorder(
-                      borderRadius: DefaultBorders.container,
-                      borderSide: BorderSide.none,
+                Text('Recuperar senha'),
+                IconButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  hoverColor: Colors.transparent,
+                  icon: CircleAvatar(
+                    backgroundColor: Colors.grey.shade100,
+                    radius: 22,
+                    child: Icon(
+                      Icons.close,
+                      size: 20,
+                      color: DefaultColors.textSecondary,
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-          actions: <Widget>[
-            AppButton(
-              text: 'Enviar',
-              fullWidth: false,
-              onPressed: () async {
-                if (!_recoverFormKey.currentState!.validate()) {
-                  return;
-                }
-                final String email = emailController.text.trim();
-                try {
-                  await AuthService().resetPassword(email);
-                  Navigator.pop(context);
-                  showSuccess(
-                    dialogContext,
-                    'Instruções de recuperação enviadas!',
-                  );
-                } catch (e) {
-                  showError(dialogContext, 'Erro ao enviar recuperação');
-                }
-              },
+            shape: RoundedRectangleBorder(borderRadius: DefaultBorders.card),
+            content: Form(
+              key: _recoverFormKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Text(
+                    'Digite seu e-mail para receber as instruções de recuperação',
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: emailController,
+                    validator: Validators.validateEmail,
+                    decoration: InputDecoration(
+                      labelText: 'E-mail',
+                      prefixIcon: Icon(Icons.email_outlined),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: OutlineInputBorder(
+                        borderRadius: DefaultBorders.container,
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+            actions: <Widget>[
+              AppButton(
+                text: 'Enviar',
+                fullWidth: false,
+                onPressed: () async {
+                  if (!_recoverFormKey.currentState!.validate()) {
+                    return;
+                  }
+                  final String email = emailController.text.trim();
+                  try {
+                    await AuthService().resetPassword(email);
+                    Navigator.pop(context);
+                    showSuccess(
+                      dialogContext,
+                      'Instruções de recuperação enviadas!',
+                    );
+                  } catch (e) {
+                    showError(dialogContext, 'Erro ao enviar recuperação');
+                  }
+                },
+              ),
+            ],
+          ),
         );
       },
     );
@@ -258,6 +264,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: PageCardLayout(child: content()));
+    return Theme(
+      data: themeLightData(),
+      child: Scaffold(body: PageCardLayout(child: content())),
+    );
   }
 }

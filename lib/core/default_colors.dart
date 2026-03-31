@@ -36,6 +36,12 @@ abstract class DefaultColors {
   static const LinearGradient colorTest = LinearGradient(
     colors: <Color>[Color(0xFFFF6FB1), Color(0xFF6A8CFF)],
   );
+
+  static const LinearGradient backgroundGradientDark = LinearGradient(
+    colors: <Color>[Color(0xFF1E1E2E), Color(0xFF2A2A3D), Color(0xFF3A3A5A)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 }
 
 ThemeData themeLightData() {

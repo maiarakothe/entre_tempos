@@ -9,11 +9,14 @@ class PageCardLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: DefaultColors.backgroundGradient,
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? DefaultColors.backgroundGradientDark
+            : DefaultColors.backgroundGradient,
       ),
       child: Center(
         child: SingleChildScrollView(
@@ -22,11 +25,13 @@ class PageCardLayout extends StatelessWidget {
             margin: const EdgeInsets.all(24),
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.95),
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(24),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: isDark
+                      ? Colors.black.withValues(alpha: 0.6)
+                      : Colors.black.withValues(alpha: 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),

@@ -214,7 +214,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
         const SizedBox(height: 8),
         Text(
           'Escreva hoje para ler no futuro',
-          style: TextStyle(fontSize: 14, color: DefaultColors.textSecondary),
+          style: TextStyle(fontSize: 14, color: Theme.of(context).hintColor),
           textAlign: TextAlign.center,
         ),
       ],
@@ -240,7 +240,10 @@ class _NewLetterPageState extends State<NewLetterPage> {
                   onTap: pickImages,
                   child: Row(
                     children: <Widget>[
-                      Icon(Icons.image_rounded, color: DefaultColors.primary),
+                      Icon(
+                        Icons.image_rounded,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       SizedBox(width: 10),
                       Text('Imagens'),
                     ],
@@ -263,9 +266,9 @@ class _NewLetterPageState extends State<NewLetterPage> {
                         onTap: pickAudio,
                         child: Row(
                           children: <Widget>[
-                            const Icon(
+                            Icon(
                               Icons.audiotrack_rounded,
-                              color: DefaultColors.primary,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -378,9 +381,9 @@ class _NewLetterPageState extends State<NewLetterPage> {
               ),
               child: Row(
                 children: <Widget>[
-                  const Icon(
+                  Icon(
                     Icons.calendar_month,
-                    color: DefaultColors.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -390,8 +393,8 @@ class _NewLetterPageState extends State<NewLetterPage> {
                           : formatDate(selectedDate!),
                       style: TextStyle(
                         color: selectedDate == null
-                            ? DefaultColors.textSecondary
-                            : DefaultColors.text,
+                            ? Theme.of(context).hintColor
+                            : Theme.of(context).textTheme.bodyMedium?.color,
                         fontSize: 16,
                       ),
                     ),
@@ -423,7 +426,10 @@ class _NewLetterPageState extends State<NewLetterPage> {
         leading: isSending
             ? null
             : IconButton(
-                icon: const Icon(Icons.arrow_back, color: DefaultColors.text),
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).appBarTheme.foregroundColor,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
       ),

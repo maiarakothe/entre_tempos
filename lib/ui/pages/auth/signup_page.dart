@@ -2,6 +2,7 @@ import 'package:entre_tempos/utils/validators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/default_colors.dart';
 import '../../../data/services/auth_service.dart';
 import '../../../utils/auth_error_handler.dart';
 import '../routes/routes.dart';
@@ -230,6 +231,9 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: PageCardLayout(child: content()));
+    return Theme(
+      data: themeLightData(),
+      child: Scaffold(body: PageCardLayout(child: content())),
+    );
   }
 }
