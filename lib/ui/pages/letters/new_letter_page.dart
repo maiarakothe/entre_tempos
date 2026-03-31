@@ -8,6 +8,7 @@ import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../../../data/models/letter.dart';
 import '../../../data/services/letter_service.dart';
@@ -29,10 +30,10 @@ class _NewLetterPageState extends State<NewLetterPage> {
   bool isSending = false;
 
   List<Uint8List> selectedImages = <Uint8List>[];
+  Uint8List? selectedAudio;
+  String? selectedAudioName;
 
   final ImagePicker _picker = ImagePicker();
-
-  final LetterService _letterService = LetterService();
 
   Future<void> pickImages() async {
     if (selectedImages.length >= 5) {
@@ -88,6 +89,36 @@ class _NewLetterPageState extends State<NewLetterPage> {
     }
   }
 
+  Future<void> pickAudio() async {
+    try {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: <String>['mp3', 'wav', 'ogg', 'mpeg'],
+        withData: true,
+      );
+
+      if (result != null && result.files.single.bytes != null) {
+        final PlatformFile file = result.files.single;
+        final int sizeInBytes = file.size;
+        if (sizeInBytes > 1000000) {
+          showSnackBar(
+            context,
+            message: 'Áudio muito grande. Máx: 1MB',
+            color: DefaultColors.warning,
+          );
+          return;
+        }
+        setState(() {
+          selectedAudio = file.bytes;
+          selectedAudioName = file.name;
+        });
+      }
+    } catch (e) {
+      print('ERRO AUDIO: $e');
+      showError(context, 'Erro ao selecionar áudio');
+    }
+  }
+
   @override
   void dispose() {
     titleController.dispose();
@@ -97,6 +128,10 @@ class _NewLetterPageState extends State<NewLetterPage> {
 
   static List<String> _encodeImages(List<Uint8List> images) {
     return images.map(base64Encode).toList();
+  }
+
+  static String _encodeAudio(Uint8List audio) {
+    return base64Encode(audio);
   }
 
   Future<void> formSubmit() async {
@@ -129,6 +164,12 @@ class _NewLetterPageState extends State<NewLetterPage> {
       if (selectedImages.isNotEmpty) {
         imageUrls = await compute(_encodeImages, selectedImages);
       }
+
+      String? audioBase64;
+      if (selectedAudio != null) {
+        audioBase64 = await compute(_encodeAudio, selectedAudio!);
+      }
+
       final Letter letter = Letter(
         id: '',
         title: title,
@@ -138,17 +179,25 @@ class _NewLetterPageState extends State<NewLetterPage> {
         parentId: widget.parentId,
         userId: user.uid,
         imageUrls: imageUrls,
+        audioUrl: audioBase64,
       );
-      await _letterService.createLetter(letter);
-      showSuccess(context, 'Carta enviada com sucesso');
-      Navigator.pop(context);
+      await LetterService().createLetter(letter);
+
+      if (mounted) {
+        showSuccess(context, 'Carta enviada com sucesso');
+        Navigator.pop(context);
+      }
     } catch (e) {
       print('ERRO GERAL: $e');
-      showError(context, 'Erro ao enviar carta');
+      if (mounted) {
+        showError(context, 'Erro ao enviar carta');
+      }
     } finally {
-      setState(() {
-        isSending = false;
-      });
+      if (mounted) {
+        setState(() {
+          isSending = false;
+        });
+      }
     }
   }
 
@@ -207,18 +256,37 @@ class _NewLetterPageState extends State<NewLetterPage> {
                   borderRadius: DefaultBorders.container,
                   border: Border.all(color: Colors.grey),
                 ),
-                child: InkWell(
-                  onTap: () {},
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.audiotrack_rounded,
-                        color: DefaultColors.primary.withValues(alpha: 0.5),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: InkWell(
+                        onTap: pickAudio,
+                        child: Row(
+                          children: <Widget>[
+                            const Icon(
+                              Icons.audiotrack_rounded,
+                              color: DefaultColors.primary,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                selectedAudioName ?? 'Audio',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      SizedBox(width: 10),
-                      Text('Audio'),
-                    ],
-                  ),
+                    ),
+                    if (selectedAudio != null)
+                      GestureDetector(
+                        onTap: () => setState(() {
+                          selectedAudio = null;
+                          selectedAudioName = null;
+                        }),
+                        child: const Icon(Icons.close, size: 18),
+                      ),
+                  ],
                 ),
               ),
             ),

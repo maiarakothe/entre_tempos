@@ -16,6 +16,11 @@ String formatDate(DateTime d) {
       '${d.year}';
 }
 
+String formatDurationAudio(Duration duration) {
+  String twoDigits(int n) => n.toString().padLeft(2, "0");
+  return "${twoDigits(duration.inMinutes.remainder(60))}:${twoDigits(duration.inSeconds.remainder(60))}";
+}
+
 String getGreeting() {
   final int hour = DateTime.now().hour;
   if (hour < 12) {

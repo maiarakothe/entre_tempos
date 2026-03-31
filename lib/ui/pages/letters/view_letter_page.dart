@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:entre_tempos/core/default_colors.dart';
 import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/ui/widgets/app_button.dart';
@@ -28,10 +28,80 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
 
   bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
 
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool isPlaying = false;
+  Duration _duration = Duration.zero;
+  Duration _position = Duration.zero;
+
   @override
   void initState() {
     super.initState();
     _findOriginalLetter();
+    _initAudioPlayer();
+  }
+
+  void _initAudioPlayer() {
+    _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
+      if (mounted) {
+        setState(() {
+          isPlaying = state == PlayerState.playing;
+        });
+      }
+    });
+
+    _audioPlayer.onDurationChanged.listen((Duration newDuration) {
+      if (mounted) {
+        setState(() => _duration = newDuration);
+      }
+    });
+
+    _audioPlayer.onPositionChanged.listen((Duration newPosition) {
+      if (mounted) {
+        setState(() => _position = newPosition);
+      }
+    });
+
+    _audioPlayer.onPlayerComplete.listen((_) {
+      if (mounted) {
+        setState(() {
+          isPlaying = false;
+          _position = Duration.zero;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _toggleAudio() async {
+    if (widget.letter.audioUrl == null) {
+      return;
+    }
+    try {
+      if (isPlaying) {
+        await _audioPlayer.pause();
+      } else {
+        if (_audioPlayer.state == PlayerState.paused) {
+          await _audioPlayer.resume();
+        } else {
+          String audioData = widget.letter.audioUrl!.trim();
+          if (audioData.contains(',')) {
+            audioData = audioData.split(',').last;
+          }
+          // O formato audio/mpeg é um fallback comum, o navegador detectará o real (webm/mp4/etc)
+          await _audioPlayer.play(
+            UrlSource('data:audio/mpeg;base64,$audioData'),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Erro ao reproduzir áudio: $e');
+      showError(context, 'Não foi possível reproduzir o áudio');
+    }
   }
 
   Future<void> _findOriginalLetter() async {
@@ -179,8 +249,21 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
             widget.letter.content,
             style: const TextStyle(fontSize: 16, height: 1.5),
           ),
-          if (widget.letter.imageUrls.isNotEmpty) const SizedBox(height: 10),
-          imagesSection(),
+          if (widget.letter.audioUrl != null ||
+              widget.letter.imageUrls.isNotEmpty) ...<Widget>[
+            const SizedBox(height: 10),
+            Divider(color: DefaultColors.textSecondary.withValues(alpha: 0.1)),
+            const SizedBox(height: 20),
+            Text(
+              'Memórias anexadas',
+              style: TextStyle(
+                fontSize: 14,
+                color: DefaultColors.textSecondary,
+              ),
+            ),
+            imagesSection(),
+            audioSection(),
+          ],
           const SizedBox(height: 32),
           replyButton(),
         ],
@@ -188,16 +271,78 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
     );
   }
 
+  Widget audioSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          decoration: BoxDecoration(
+            color: DefaultColors.primary.withValues(alpha: 0.08),
+            borderRadius: DefaultBorders.container,
+          ),
+          child: Row(
+            children: <Widget>[
+              IconButton(
+                onPressed: _toggleAudio,
+                icon: Icon(
+                  isPlaying
+                      ? Icons.pause_circle_filled
+                      : Icons.play_circle_fill,
+                  color: DefaultColors.primary,
+                  size: 40,
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Slider(
+                      activeColor: DefaultColors.primary,
+                      inactiveColor: DefaultColors.primary.withValues(
+                        alpha: 0.2,
+                      ),
+                      min: 0,
+                      max: _duration.inMilliseconds.toDouble() > 0
+                          ? _duration.inMilliseconds.toDouble()
+                          : 0,
+                      value: _position.inMilliseconds.toDouble(),
+                      onChanged: (double value) async {
+                        await _audioPlayer.seek(
+                          Duration(milliseconds: value.toInt()),
+                        );
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            formatDurationAudio(_position),
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          Text(
+                            formatDurationAudio(_duration),
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget imagesSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Divider(color: DefaultColors.textSecondary.withValues(alpha: 0.1)),
-        const SizedBox(height: 20),
-        Text(
-          'Memórias anexadas',
-          style: TextStyle(fontSize: 14, color: DefaultColors.textSecondary),
-        ),
         const SizedBox(height: 10),
         ImageCard(images: widget.letter.imageUrls.map(base64Decode).toList()),
       ],
