@@ -39,7 +39,7 @@ class _LetterPageState extends State<LetterPage> {
       child: Container(
         padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(
-          gradient: DefaultColors.colorTest,
+          gradient: DefaultColors.backgroundGradient,
           borderRadius: DefaultBorders.card,
           boxShadow: <BoxShadow>[
             BoxShadow(
@@ -157,7 +157,7 @@ class _LetterPageState extends State<LetterPage> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
-          gradient: active ? DefaultColors.colorTest : null,
+          gradient: active ? DefaultColors.backgroundGradient : null,
           color: active ? null : Theme.of(context).cardColor,
           borderRadius: DefaultBorders.button,
           border: active

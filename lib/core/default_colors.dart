@@ -18,22 +18,21 @@ abstract class DefaultColors {
   static const Color error = Color(0xFFFF5A5A);
   static const Color warning = Color(0xFFFFB347);
 
-  static const LinearGradient backgroundGradient = LinearGradient(
+  static const LinearGradient backgroundGradientLight = LinearGradient(
     colors: <Color>[Color(0xFFFFD3E0), Color(0xFFD4E2FF)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // Botão gradiente e testes de cores
-  static const LinearGradient primaryButtonGradient = LinearGradient(
-    colors: <Color>[Color(0xFF6A00FF), Color(0xFF4B7BFF)],
-  );
+  // static const LinearGradient primaryButtonGradient = LinearGradient(
+  //   colors: <Color>[Color(0xFF6A00FF), Color(0xFF4B7BFF)],
+  // );
 
-  static const LinearGradient colorTeste = LinearGradient(
+  static const LinearGradient backgroundGradientHover = LinearGradient(
     colors: <Color>[Color(0xFFFF5FA2), Color(0xFF7B5CFF)],
   );
 
-  static const LinearGradient colorTest = LinearGradient(
+  static const LinearGradient backgroundGradient = LinearGradient(
     colors: <Color>[Color(0xFFFF6FB1), Color(0xFF6A8CFF)],
   );
 

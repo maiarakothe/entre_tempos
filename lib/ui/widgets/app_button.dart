@@ -89,8 +89,8 @@ class _AppButtonState extends State<AppButton> {
                     : null),
             gradient: widget.backgroundColor == null && !isDisabled
                 ? (_hovered
-                      ? DefaultColors.colorTeste
-                      : DefaultColors.colorTest)
+                      ? DefaultColors.backgroundGradientHover
+                      : DefaultColors.backgroundGradient)
                 : null,
             borderRadius: DefaultBorders.button,
             boxShadow: isDisabled

@@ -84,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
             height: 100,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              gradient: DefaultColors.colorTest,
+              gradient: DefaultColors.backgroundGradient,
             ),
             child: const CircleAvatar(
               backgroundColor: Colors.transparent,

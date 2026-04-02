@@ -251,7 +251,7 @@ class FlapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..shader = DefaultColors.colorTest.createShader(
+      ..shader = DefaultColors.backgroundGradient.createShader(
         Rect.fromLTWH(0, 0, size.width, size.height),
       );
 
@@ -289,7 +289,7 @@ class EnvelopeBodyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..shader = DefaultColors.colorTest.createShader(
+      ..shader = DefaultColors.backgroundGradient.createShader(
         Rect.fromLTWH(0, 0, size.width, size.height),
       );
 

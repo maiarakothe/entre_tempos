@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:entre_tempos/core/default_colors.dart';
 import 'package:entre_tempos/core/utils.dart';
 import 'package:entre_tempos/ui/widgets/app_button.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
@@ -204,32 +203,19 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
   }
 
   Widget replyButton() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: DefaultColors.colorTest,
-        borderRadius: DefaultBorders.button,
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: DefaultColors.primary.withValues(alpha: 0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: AppButton(
-        text: 'Responder essa carta',
-        icon: Icons.reply,
-        onPressed: () async {
-          final Object? newLetter = await Navigator.pushNamed(
-            context,
-            AppRoutes.newLetter,
-            arguments: widget.letter.id,
-          );
-          if (newLetter != null) {
-            Navigator.pop(context, newLetter);
-          }
-        },
-      ),
+    return AppButton(
+      text: 'Responder essa carta',
+      icon: Icons.reply,
+      onPressed: () async {
+        final Object? newLetter = await Navigator.pushNamed(
+          context,
+          AppRoutes.newLetter,
+          arguments: widget.letter.id,
+        );
+        if (newLetter != null) {
+          Navigator.pop(context, newLetter);
+        }
+      },
     );
   }
 

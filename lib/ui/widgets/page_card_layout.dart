@@ -16,7 +16,7 @@ class PageCardLayout extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: isDark
             ? DefaultColors.backgroundGradientDark
-            : DefaultColors.backgroundGradient,
+            : DefaultColors.backgroundGradientLight,
       ),
       child: Center(
         child: SingleChildScrollView(
