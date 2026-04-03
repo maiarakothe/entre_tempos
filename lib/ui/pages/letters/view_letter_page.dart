@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:entre_tempos/core/utils.dart';
+import 'package:entre_tempos/data/services/pdf_service.dart';
 import 'package:entre_tempos/ui/widgets/app_button.dart';
 import 'package:entre_tempos/ui/widgets/page_card_layout.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class ViewLetterPage extends StatefulWidget {
 class _ViewLetterPageState extends State<ViewLetterPage> {
   Letter? originalLetter;
   bool isLoadingParent = false;
+  bool isExporting = false;
   final LetterService _letterService = LetterService();
 
   bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
@@ -206,6 +208,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
     return AppButton(
       text: 'Responder essa carta',
       icon: Icons.reply,
+      fullWidth: false,
       onPressed: () async {
         final Object? newLetter = await Navigator.pushNamed(
           context,
@@ -214,6 +217,30 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
         );
         if (newLetter != null) {
           Navigator.pop(context, newLetter);
+        }
+      },
+    );
+  }
+
+  Widget exportButton() {
+    return AppButton(
+      text: isExporting ? 'Exportando' : 'Exportar',
+      icon: Icons.picture_as_pdf,
+      fullWidth: false,
+      disabled: isExporting,
+      onPressed: () async {
+        setState(() {
+          isExporting = true;
+        });
+        try {
+          await PdfService.exportLetter(widget.letter);
+          showSuccess(context, 'PDF exportado com sucesso');
+        } catch (e) {
+          showError(context, 'Erro ao exportar PDF');
+        } finally {
+          setState(() {
+            isExporting = false;
+          });
         }
       },
     );
@@ -251,7 +278,13 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
             audioSection(),
           ],
           const SizedBox(height: 32),
-          replyButton(),
+          Row(
+            children: <Widget>[
+              Expanded(child: replyButton()),
+              const SizedBox(width: 15),
+              Expanded(child: exportButton()),
+            ],
+          ),
         ],
       ),
     );
