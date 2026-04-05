@@ -34,6 +34,18 @@ class _NewLetterPageState extends State<NewLetterPage> {
   String? selectedAudioName;
 
   final ImagePicker _picker = ImagePicker();
+  static const int maxSize = 900000;
+
+  int calculateTotalSize() {
+    int total = 0;
+    for (final Uint8List img in selectedImages) {
+      total += img.lengthInBytes;
+    }
+    if (selectedAudio != null) {
+      total += selectedAudio!.lengthInBytes;
+    }
+    return total;
+  }
 
   Future<void> pickImages() async {
     if (selectedImages.length >= 5) {
@@ -71,6 +83,16 @@ class _NewLetterPageState extends State<NewLetterPage> {
         if (allowedExtensions.contains(extension)) {
           final Uint8List bytes = await img.readAsBytes();
           selectedImages.add(bytes);
+          final int totalSize = calculateTotalSize();
+          if (totalSize > maxSize) {
+            selectedImages.removeLast();
+            showSnackBar(
+              context,
+              message: 'Imagem muito grande. Limite atingido',
+              color: DefaultColors.warning,
+            );
+            break;
+          }
         } else {
           hasInvalidFile = true;
         }
@@ -145,6 +167,15 @@ class _NewLetterPageState extends State<NewLetterPage> {
       showSnackBar(
         context,
         message: 'Selecione uma data',
+        color: DefaultColors.warning,
+      );
+      return;
+    }
+    final int totalSize = calculateTotalSize();
+    if (totalSize > maxSize) {
+      showSnackBar(
+        context,
+        message: 'Arquivos muito grandes. Reduza imagens ou áudio.',
         color: DefaultColors.warning,
       );
       return;
@@ -225,7 +256,19 @@ class _NewLetterPageState extends State<NewLetterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Anexar memórias'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text('Anexar memórias'),
+            Text(
+              'Uso: ${(calculateTotalSize() / 1000000).toStringAsFixed(2)} MB / 1 MB',
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).hintColor,
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 10),
         Row(
           children: <Widget>[
