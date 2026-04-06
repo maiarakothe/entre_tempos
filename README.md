@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/Flutter-3.22+-blue?logo=flutter" />
 <img src="https://img.shields.io/badge/Dart-3.10-blue?logo=dart" />
 <img src="https://img.shields.io/badge/Firebase-Auth%20%7C%20Firestore-orange?logo=firebase" />
-<img src="https://img.shields.io/badge/Status-Em%20desenvolvimento-purple" />
+<img src="https://img.shields.io/badge/Status-Finalizado-purple" />
 <img src="https://img.shields.io/badge/Plataforma-Mobile%20%7C%20Web-green" />
 </p>
 
@@ -66,6 +66,13 @@ O foco do app não é apenas funcional — é **sentimento**:
 
 * 🔒 Cartas bloqueadas
 * 🔓 Cartas liberadas
+
+---
+
+### 📄 Exportar carta
+
+* 💾 Exportação em PDF com um clique
+* 🖼️ Inclui imagens e conteúdo
 
 ---
 
