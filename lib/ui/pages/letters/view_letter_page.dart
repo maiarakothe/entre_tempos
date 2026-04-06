@@ -174,37 +174,70 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
     );
   }
 
+  Widget _dateItem({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(icon, color: color, size: 16),
+        SizedBox(height: 2),
+        Text(label, style: TextStyle(color: color)),
+        SizedBox(height: 2),
+        Text(value, style: TextStyle(fontWeight: FontWeight.w500)),
+      ],
+    );
+  }
+
   Widget dateSection() {
+    final Color hintColor = Theme.of(context).hintColor;
+    if (isMobile) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          _dateItem(
+            icon: Icons.calendar_today_outlined,
+            label: 'Escrita em',
+            value: formatDate(widget.letter.creationDate),
+            color: hintColor,
+          ),
+          Container(
+            height: 40,
+            width: 1,
+            color: Theme.of(context).dividerColor,
+          ),
+          _dateItem(
+            icon: Icons.access_time_rounded,
+            label: 'Liberada em',
+            value: formatDate(widget.letter.openingDate),
+            color: hintColor,
+          ),
+        ],
+      );
+    }
     return Row(
       children: <Widget>[
-        Icon(
-          Icons.calendar_today_outlined,
-          color: Theme.of(context).hintColor,
-          size: 16,
-        ),
+        Icon(Icons.calendar_today_outlined, color: hintColor, size: 16),
         SizedBox(width: 4),
         Text(
           'Escrita em ${formatDate(widget.letter.creationDate)}',
-          style: TextStyle(color: Theme.of(context).hintColor, fontSize: 14),
-          textAlign: TextAlign.center,
+          style: TextStyle(color: hintColor),
         ),
         Spacer(),
-        Icon(
-          Icons.access_time_rounded,
-          color: Theme.of(context).hintColor,
-          size: 16,
-        ),
+        Icon(Icons.access_time_rounded, color: hintColor, size: 16),
         SizedBox(width: 4),
         Text(
           'Liberada em ${formatDate(widget.letter.openingDate)}',
-          style: TextStyle(color: Theme.of(context).hintColor, fontSize: 14),
-          textAlign: TextAlign.center,
+          style: TextStyle(color: hintColor),
         ),
       ],
     );
   }
 
-  Widget replyButton() {
+  Widget replyButton({bool fullWidth = false}) {
     return AppButton(
       text: 'Responder essa carta',
       icon: Icons.reply,
@@ -222,7 +255,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
     );
   }
 
-  Widget exportButton() {
+  Widget exportButton({bool fullWidth = false}) {
     return AppButton(
       text: isExporting ? 'Exportando' : 'Exportar',
       icon: Icons.picture_as_pdf,
@@ -243,6 +276,26 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
           });
         }
       },
+    );
+  }
+
+  Widget actionsButtons() {
+    if (isMobile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          replyButton(fullWidth: true),
+          const SizedBox(height: 10),
+          exportButton(fullWidth: true),
+        ],
+      );
+    }
+    return Row(
+      children: <Widget>[
+        Expanded(child: replyButton()),
+        const SizedBox(width: 15),
+        Expanded(child: exportButton()),
+      ],
     );
   }
 
@@ -278,13 +331,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
             audioSection(),
           ],
           const SizedBox(height: 32),
-          Row(
-            children: <Widget>[
-              Expanded(child: replyButton()),
-              const SizedBox(width: 15),
-              Expanded(child: exportButton()),
-            ],
-          ),
+          actionsButtons(),
         ],
       ),
     );

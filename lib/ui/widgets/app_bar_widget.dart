@@ -13,10 +13,19 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       title: Row(
         children: <Widget>[
-          Image.asset(
-            'assets/images/logo-sem-fundo.png',
-            width: 150,
-            height: 90,
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.home,
+                (Route<dynamic> route) => false,
+              );
+            },
+            child: Image.asset(
+              'assets/images/logo-sem-fundo.png',
+              width: 150,
+              height: 90,
+            ),
           ),
         ],
       ),
