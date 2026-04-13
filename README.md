@@ -44,7 +44,7 @@ O foco do app não é apenas funcional — é **sentimento**:
 ## 🎥 Preview
 
 <p align="center">
-  <img src="assets/images/demo.gif" width="500"/>
+  <img src="assets/images/demo.gif"/>
 </p>
 
 ---
