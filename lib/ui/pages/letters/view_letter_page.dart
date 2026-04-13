@@ -300,6 +300,10 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
   }
 
   Widget letterContent() {
+    final bool hasAudio =
+        widget.letter.audioUrl != null && widget.letter.audioUrl!.isNotEmpty;
+
+    final bool hasImages = widget.letter.imageUrls.isNotEmpty;
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 800),
       child: Column(
@@ -315,8 +319,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
             widget.letter.content,
             style: const TextStyle(fontSize: 16, height: 1.5),
           ),
-          if (widget.letter.audioUrl != null ||
-              widget.letter.imageUrls.isNotEmpty) ...<Widget>[
+          if (hasAudio || hasImages) ...<Widget>[
             const SizedBox(height: 10),
             Divider(color: Theme.of(context).dividerColor),
             const SizedBox(height: 20),
@@ -327,8 +330,8 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
                 color: Theme.of(context).hintColor,
               ),
             ),
-            imagesSection(),
-            audioSection(),
+            if (hasImages) imagesSection(),
+            if (hasAudio) audioSection(),
           ],
           const SizedBox(height: 32),
           actionsButtons(),
