@@ -18,6 +18,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   bool isEditing = false;
   bool isLoading = false;
+  bool _wasUpdated = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -53,6 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
       await UserService().updateUserName(nameController.text);
       setState(() {
         isEditing = false;
+        _wasUpdated = true;
       });
       showSuccess(context, 'Nome atualizado com sucesso!');
     } catch (e) {
@@ -173,10 +175,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).cardColor,
-      appBar: AppBarWidget(),
-      body: PageCardLayout(child: content()),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (didPop) {
+          return;
+        }
+        Navigator.pop(context, _wasUpdated);
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBarWidget(),
+        body: PageCardLayout(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          child: content(),
+        ),
+      ),
     );
   }
 }

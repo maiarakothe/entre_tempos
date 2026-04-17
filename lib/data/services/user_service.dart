@@ -28,6 +28,9 @@ class UserService {
     if (user == null) {
       throw Exception('Usuário não autenticado');
     }
+
+    await user.updateDisplayName(name.trim());
+
     await _firestore.collection('users').doc(user.uid).update(<Object, Object?>{
       'name': name.trim(),
     });

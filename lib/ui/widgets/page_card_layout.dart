@@ -4,8 +4,15 @@ import '../../core/default_colors.dart';
 
 class PageCardLayout extends StatelessWidget {
   final Widget child;
+  final Gradient? gradient;
+  final Color? backgroundColor;
 
-  const PageCardLayout({super.key, required this.child});
+  const PageCardLayout({
+    super.key,
+    required this.child,
+    this.gradient,
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +21,14 @@ class PageCardLayout extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       decoration: BoxDecoration(
-        gradient: isDark
-            ? DefaultColors.backgroundGradientDark
-            : DefaultColors.backgroundGradientLight,
+        gradient:
+            gradient ??
+            (backgroundColor == null
+                ? (isDark
+                      ? DefaultColors.backgroundGradientDark
+                      : DefaultColors.backgroundGradientLight)
+                : null),
+        color: backgroundColor,
       ),
       child: Center(
         child: SingleChildScrollView(

@@ -25,60 +25,63 @@ class _LetterPageState extends State<LetterPage> {
 
   final LetterService _letterService = LetterService();
 
-  String getUserName() {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return 'Usuário';
-    }
-    return user.displayName?.split(' ').first ?? 'Usuário';
-  }
-
   Widget slogan() {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Container(
-        padding: const EdgeInsets.all(30),
-        decoration: BoxDecoration(
-          gradient: DefaultColors.backgroundGradient,
-          borderRadius: DefaultBorders.card,
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: DefaultColors.primary.withValues(alpha: 0.25),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.userChanges(),
+      builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+        final User? user = snapshot.data;
+        final String name = user?.displayName?.split(' ').first ?? 'Usuário';
+
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              gradient: DefaultColors.backgroundGradient,
+              borderRadius: DefaultBorders.card,
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: DefaultColors.primary.withValues(alpha: 0.25),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              "${getGreeting()}, ${getUserName()} 👋",
-              style: TextStyle(color: DefaultColors.cardLight, fontSize: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "${getGreeting()}, $name 👋",
+                  style: const TextStyle(
+                    color: DefaultColors.cardLight,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "Envie mensagens para seu futuro",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: DefaultColors.cardLight,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (isMobile)
+                  AppButton(
+                    text: 'Escrever carta',
+                    onPressed: createLetter,
+                    icon: Icons.edit,
+                    backgroundColor: Colors.white,
+                    textColor: DefaultColors.primary,
+                    fontSize: 15,
+                  ),
+              ],
             ),
-            const SizedBox(height: 8),
-            const Text(
-              "Envie mensagens para seu futuro",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-                color: DefaultColors.cardLight,
-                height: 1.2,
-              ),
-            ),
-            const SizedBox(height: 20),
-            if (isMobile)
-              AppButton(
-                text: 'Escrever carta',
-                onPressed: createLetter,
-                icon: Icons.edit,
-                backgroundColor: Colors.white,
-                textColor: DefaultColors.primary,
-                fontSize: 15,
-              ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
