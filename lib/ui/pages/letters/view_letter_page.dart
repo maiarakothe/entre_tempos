@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:entre_tempos/core/utils.dart';
@@ -25,6 +26,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
   Letter? originalLetter;
   bool isLoadingParent = false;
   bool isExporting = false;
+  List<Uint8List> _decodedImages = <Uint8List>[];
   final LetterService _letterService = LetterService();
 
   bool get isMobile => MediaQuery.of(context).size.width < kMobileWidth;
@@ -37,8 +39,28 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
   @override
   void initState() {
     super.initState();
+    _decodeImages();
     _findOriginalLetter();
     _initAudioPlayer();
+    _loadAudioDuration();
+  }
+
+  Future<void> _loadAudioDuration() async {
+    if (widget.letter.audioUrl != null && widget.letter.audioUrl!.isNotEmpty) {
+      try {
+        String audioData = widget.letter.audioUrl!.trim();
+        if (audioData.contains(',')) {
+          audioData = audioData.split(',').last;
+        }
+        await _audioPlayer.setSource(UrlSource('data:audio/mpeg;base64,$audioData'));
+      } catch (e) {
+        debugPrint('Erro ao carregar duração do áudio: $e');
+      }
+    }
+  }
+
+  void _decodeImages() {
+    _decodedImages = widget.letter.imageUrls.map(base64Decode).toList();
   }
 
   void _initAudioPlayer() {
@@ -416,7 +438,7 @@ class _ViewLetterPageState extends State<ViewLetterPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         const SizedBox(height: 10),
-        ImageCard(images: widget.letter.imageUrls.map(base64Decode).toList()),
+        ImageCard(images: _decodedImages),
       ],
     );
   }
