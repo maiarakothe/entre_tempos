@@ -48,6 +48,13 @@ O foco do app não é apenas funcional — é **sentimento**:
 </p>
 
 ---
+## 🚀 Experimente o app
+
+<p align="center">
+  👉 <a href="https://entretempos-c93db.web.app/">Clique aqui para acessar</a>
+</p>
+
+---
 
 ## 🚀 Funcionalidades
 
