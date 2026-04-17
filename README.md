@@ -22,9 +22,9 @@ Já pensou em escrever algo hoje… e só poder ler no futuro?
 
 O **EntreTempos** transforma essa ideia em uma experiência real:
 
-* você escreve uma carta agora ✍️
-* define uma data no futuro ⏳
-* e só poderá acessar quando esse momento chegar 🔓
+- você escreve uma carta agora ✍️
+- define uma data no futuro ⏳
+- e só poderá acessar quando esse momento chegar 🔓
 
 > Mais do que um app, é uma experiência emocional que conecta passado, presente e futuro.
 
@@ -34,10 +34,10 @@ O **EntreTempos** transforma essa ideia em uma experiência real:
 
 O foco do app não é apenas funcional — é **sentimento**:
 
-* 💌 Expectativa ao aguardar a abertura
-* 🔒 Curiosidade com cartas bloqueadas
-* ✉️ Animação imersiva ao abrir (efeito envelope)
-* 💭 Reflexão ao revisitar pensamentos antigos
+- 💌 Expectativa ao aguardar a abertura
+- 🔒 Curiosidade com cartas bloqueadas
+- ✉️ Animação imersiva ao abrir (efeito envelope)
+- 💭 Reflexão ao revisitar pensamentos antigos
 
 ---
 
@@ -48,6 +48,7 @@ O foco do app não é apenas funcional — é **sentimento**:
 </p>
 
 ---
+
 ## 🚀 Experimente o app
 
 <p align="center">
@@ -60,52 +61,52 @@ O foco do app não é apenas funcional — é **sentimento**:
 
 ### ✍️ Criar cartas
 
-* Título
-* Conteúdo livre
-* Data de abertura
+- Título
+- Conteúdo livre
+- Data de abertura
 
 ---
 
 ### 📎 Anexos
 
-* 📷 Até 5 imagens por carta
-* 🎤 Áudio (até 1MB)
+- 📷 Até 4 imagens por carta
+- 🎤 Áudio (limite total compartilhado de 700KB)
 
 ---
 
 ### 📬 Organização
 
-* 🔒 Cartas bloqueadas
-* 🔓 Cartas liberadas
+- 🔒 Cartas bloqueadas
+- 🔓 Cartas liberadas
 
 ---
 
 ### 📄 Exportar carta
 
-* 💾 Exportação em PDF com um clique
-* 🖼️ Inclui imagens e conteúdo
+- 💾 Exportação em PDF com um clique
+- 🖼️ Inclui imagens e conteúdo
 
 ---
 
 ### ✉️ Abertura da carta
 
-* Animação de envelope
-* Responder carta (linha do tempo pessoal)
+- Animação de envelope
+- Responder carta (linha do tempo pessoal)
 
 ---
 
 ### 👤 Perfil
 
-* Nome e email
-* Edição de dados
-* Recuperação de senha
+- Nome e email
+- Edição de dados
+- Recuperação de senha
 
 ---
 
 ### 🌙 UX
 
-* Tema escuro
-* Interface responsiva
+- Tema escuro
+- Interface responsiva
 
 ---
 
@@ -115,28 +116,28 @@ O projeto foi construído com foco em **performance, escalabilidade e experiênc
 
 ### 🚀 Stack principal
 
-* **Flutter 3.22+**
-* **Dart 3.10**
+- **Flutter 3.22+**
+- **Dart 3.10**
 
 ---
 
 ### 🔐 Backend & Dados
 
-* **Firebase Authentication** → gerenciamento de usuários (login, cadastro, recuperação de senha)
-* **Cloud Firestore** → armazenamento das cartas e dados do usuário em tempo real
+- **Firebase Authentication** → gerenciamento de usuários (login, cadastro, recuperação de senha)
+- **Cloud Firestore** → armazenamento das cartas e dados do usuário em tempo real
 
 ---
 
 ### 📎 Manipulação de arquivos
 
-* **Image Picker / File Picker** → seleção de imagens e arquivos
-* **AudioPlayers** → reprodução de áudios
+- **Image Picker / File Picker** → seleção de imagens e arquivos
+- **AudioPlayers** → reprodução de áudios
 
 #### 💡 Estratégia adotada:
 
-* Imagens armazenadas inicialmente em **Base64** (MVP simplificado)
-* Estrutura preparada para migração futura para **Firebase Storage**
-* Limite de **1MB para áudio** para manter performance e baixo custo
+- Imagens armazenadas inicialmente em **Base64** (MVP simplificado)
+- Estrutura preparada para migração futura para **Firebase Storage**
+- Limite total de **700KB** para anexos (áudio + imagens) para garantir que o documento Firestore não exceda o limite de **1MB** após a codificação Base64.
 
 ---
 
@@ -169,5 +170,3 @@ flutter run
     <img src="https://img.shields.io/badge/Email-Contato-red?logo=gmail" />
   </a>
 </p>
-
-

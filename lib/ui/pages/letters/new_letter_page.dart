@@ -34,7 +34,9 @@ class _NewLetterPageState extends State<NewLetterPage> {
   String? selectedAudioName;
 
   final ImagePicker _picker = ImagePicker();
-  static const int maxSize = 900000;
+  // Limite reduzido para 700KB. Motivo: Base64 aumenta o tamanho em ~33%.
+  // Firestore tem limite de 1MB por documento. 700KB * 1.33 = ~931KB (Seguro).
+  static const int maxSize = 700000;
 
   int calculateTotalSize() {
     int total = 0;
@@ -48,16 +50,31 @@ class _NewLetterPageState extends State<NewLetterPage> {
   }
 
   Future<void> pickImages() async {
-    if (selectedImages.length >= 5) {
+    if (selectedImages.length >= 4) {
       return;
     }
+    final int limit = 4 - selectedImages.length;
     try {
-      final List<XFile> images = await _picker.pickMultiImage(
-        limit: 5 - selectedImages.length,
-        imageQuality: 60,
-        maxWidth: 1280,
-        maxHeight: 720,
-      );
+      List<XFile> images = <XFile>[];
+      if (limit == 1) {
+        final XFile? image = await _picker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 60,
+          maxWidth: 1280,
+          maxHeight: 720,
+        );
+        if (image != null) {
+          images.add(image);
+        }
+      } else {
+        images = await _picker.pickMultiImage(
+          limit: limit,
+          imageQuality: 60,
+          maxWidth: 1280,
+          maxHeight: 720,
+        );
+      }
+
       if (images.isEmpty) {
         return;
       }
@@ -71,10 +88,10 @@ class _NewLetterPageState extends State<NewLetterPage> {
         'bmp',
       ];
       for (XFile img in images) {
-        if (selectedImages.length >= 5) {
+        if (selectedImages.length >= 4) {
           showSnackBar(
             context,
-            message: 'Somente é permitido 5 imagens',
+            message: 'Somente é permitido 4 imagens',
             color: DefaultColors.warning,
           );
           break;
@@ -106,7 +123,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
       }
       setState(() {});
     } catch (e) {
-      print('ERRO REAL: $e');
+      debugPrint('ERRO REAL: $e');
       showError(context, 'Erro ao selecionar imagens');
     }
   }
@@ -122,10 +139,10 @@ class _NewLetterPageState extends State<NewLetterPage> {
       if (result != null && result.files.single.bytes != null) {
         final PlatformFile file = result.files.single;
         final int sizeInBytes = file.size;
-        if (sizeInBytes > 1000000) {
+        if (sizeInBytes > maxSize) {
           showSnackBar(
             context,
-            message: 'Áudio muito grande. Máx: 1MB',
+            message: 'Áudio muito grande. O limite total da carta é de 700KB.',
             color: DefaultColors.warning,
           );
           return;
@@ -136,7 +153,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
         });
       }
     } catch (e) {
-      print('ERRO AUDIO: $e');
+      debugPrint('ERRO AUDIO: $e');
       showError(context, 'Erro ao selecionar áudio');
     }
   }
@@ -188,7 +205,6 @@ class _NewLetterPageState extends State<NewLetterPage> {
       if (user == null) {
         throw Exception('Usuário não logado');
       }
-      await Future<void>.delayed(const Duration(milliseconds: 100));
       String title = titleController.text.trim();
       String content = contentController.text.trim();
       List<String> imageUrls = <String>[];
@@ -219,7 +235,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
         Navigator.pop(context);
       }
     } catch (e) {
-      print('ERRO GERAL: $e');
+      debugPrint('ERRO GERAL: $e');
       if (mounted) {
         showError(context, 'Erro ao enviar carta');
       }
@@ -253,6 +269,10 @@ class _NewLetterPageState extends State<NewLetterPage> {
   }
 
   Widget attachments() {
+    final int currentSize = calculateTotalSize();
+    final bool isLimitReached = currentSize >= maxSize;
+    final bool isImagesMaxed = selectedImages.length >= 4;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -261,7 +281,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
           children: <Widget>[
             Text('Anexar memórias'),
             Text(
-              'Uso: ${(calculateTotalSize() / 1000000).toStringAsFixed(2)} MB / 1 MB',
+              'Uso: ${(currentSize / 1000).toStringAsFixed(0)} KB / 700 KB',
               style: TextStyle(
                 fontSize: 12,
                 color: Theme.of(context).hintColor,
@@ -277,18 +297,41 @@ class _NewLetterPageState extends State<NewLetterPage> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   borderRadius: DefaultBorders.container,
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(
+                    color: isLimitReached || isImagesMaxed
+                        ? Colors.grey.withValues(alpha: 0.3)
+                        : Colors.grey,
+                  ),
                 ),
                 child: InkWell(
-                  onTap: pickImages,
+                  onTap: () {
+                    if (isLimitReached || isImagesMaxed) {
+                      showSnackBar(
+                        context,
+                        message: 'Limite atingido',
+                        color: DefaultColors.warning,
+                      );
+                    } else {
+                      pickImages();
+                    }
+                  },
                   child: Row(
                     children: <Widget>[
                       Icon(
                         Icons.image_rounded,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: (isLimitReached || isImagesMaxed)
+                            ? Colors.grey
+                            : Theme.of(context).colorScheme.primary,
                       ),
                       SizedBox(width: 10),
-                      Text('Imagens'),
+                      Text(
+                        'Imagens',
+                        style: TextStyle(
+                          color: (isLimitReached || isImagesMaxed)
+                              ? Colors.grey
+                              : null,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -387,6 +430,7 @@ class _NewLetterPageState extends State<NewLetterPage> {
               }
               return null;
             },
+            maxLength: 20000,
             minLines: 5,
             maxLines: null,
             decoration: InputDecoration(
@@ -461,22 +505,36 @@ class _NewLetterPageState extends State<NewLetterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: isSending
-            ? null
-            : IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Theme.of(context).appBarTheme.foregroundColor,
+    return PopScope(
+      canPop: !isSending,
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: isSending
+              ? const SizedBox.shrink()
+              : IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).appBarTheme.foregroundColor,
+                  ),
+                  onPressed: () => Navigator.pop(context),
                 ),
-                onPressed: () => Navigator.pop(context),
+        ),
+        body: Stack(
+          children: <Widget>[
+            PageCardLayout(child: letterForm()),
+            if (isSending)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
+          ],
+        ),
       ),
-      body: PageCardLayout(child: letterForm()),
     );
   }
 }

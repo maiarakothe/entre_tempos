@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 String getAuthErrorMessage(Object e) {
@@ -16,7 +17,7 @@ String getAuthErrorMessage(Object e) {
       case 'network-request-failed':
         return 'Sem conexão com a internet';
       default:
-        print('CÓDIGO NÃO TRATADO: ${e.code}');
+        debugPrint('CÓDIGO NÃO TRATADO: ${e.code}');
         return 'Erro de autenticação';
     }
   }
